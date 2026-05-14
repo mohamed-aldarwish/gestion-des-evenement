@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join Grand Luxe | Hotel Reservation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- أيقونات FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #1a1a1a;
+        --accent: #d4af37;
+        --accent-glow: rgba(212, 175, 55, 0.2);
+        --bg: #0f0f0f;
+        --white: #ffffff;
+        --text-muted: #888;
+        --input-bg: #fcfcfc;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: radial-gradient(circle at center, #2c2c2c 0%, #000 100%);
+        color: #333;
+      }
+
+      /* خلفية جمالية خفيفة */
+      body::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      .register-card {
+        background: var(--white);
+        padding: 45px;
+        border-radius: 25px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 550px; /* جعلناها أعرض قليلاً لتناسب التقسيم */
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        z-index: 10;
+      }
+
+      .register-card.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .header-section {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .header-section i {
+        font-size: 2.5rem;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.6rem;
+      }
+
+      p.subtitle {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+
+      /* نظام الشبكة للحقول */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      /* جعل بعض الحقول تأخذ العرض الكامل */
+      .full-width {
+        grid-column: span 2;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-wrapper i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #ccc;
+        transition: 0.3s;
+        font-size: 0.9rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 13px 15px 13px 45px;
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        background: var(--input-bg);
+      }
+
+      input:focus {
+        border-color: var(--accent);
+        background: var(--white);
+        box-shadow: 0 5px 15px var(--accent-glow);
+      }
+
+      input:focus + i {
+        color: var(--accent);
+      }
+
+      button {
+        grid-column: span 2;
+        padding: 16px;
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      button:hover {
+        background: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(212, 175, 55, 0.3);
+      }
+
+      .footer-link {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .footer-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .footer-link a:hover {
+        color: var(--accent);
+      }
+
+      /* استجابة الهواتف */
+      @media (max-width: 500px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .full-width {
+          grid-column: span 1;
+        }
+        button {
+          grid-column: span 1;
+        }
+      }
+
+      /* Loader Animation */
+      .loader {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #fff;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: none;
+        animation: rotation 1s linear infinite;
+      }
+
+      @keyframes rotation {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-card" id="registerCard">
+      <div class="header-section">
+        <i class="fas fa-paper-plane"></i>
+        <h1>Create Account</h1>
+        <p class="subtitle">Join our exclusive community today</p>
+      </div>
+
+      <!-- Django Messages -->
+      {% if messages %} {% for message in messages %}
+      <div
+        style="background: {% if 'error' in message.tags %}#fff5f5{% else %}#f0fdf4{% endif %}; border-left: 4px solid {% if 'error' in message.tags %}#c53030{% else %}#10b981{% endif %}; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 20px;"
+      >
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %}
+
+      <form method="POST" action="" id="registerForm">
+        {% csrf_token %}
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Username</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user-tag"></i>
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Phone Number</label>
+            <div class="input-wrapper">
+              <i class="fas fa-phone"></i>
+              <input type="text" name="phone" placeholder="+212..." />
+            </div>
+          </div>
+
+          <div class="input-group full-width">
+            <label>Email Address</label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input
+                type="email"
+                name="email"
+                placeholder="yourname@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-group full-width">
+            <label>Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                name="password"
+                placeholder="Min. 8 characters"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" id="regBtn">
+            <span>Create My Account</span>
+            <div class="loader" id="regLoader"></div>
+          </button>
+        </div>
+      </form>
+
+      <div class="footer-link">
+        Already have an account? <a href="{% url 'login' %}">Sign In</a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const card = document.getElementById("registerCard");
+
+        // تأثير الدخول
+        setTimeout(() => {
+          card.classList.add("active");
+        }, 150);
+
+        const form = document.getElementById("registerForm");
+        const btn = document.getElementById("regBtn");
+        const btnText = btn.querySelector("span");
+        const loader = document.getElementById("regLoader");
+
+        form.addEventListener("submit", () => {
+          btnText.innerText = "Registering...";
+          loader.style.display = "inline-block";
+          btn.style.pointerEvents = "none";
+          btn.style.opacity = "0.9";
+        });
+      });
+    </script>
+  </body>
+</html>

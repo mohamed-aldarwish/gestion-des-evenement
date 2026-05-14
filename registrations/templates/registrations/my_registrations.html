@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mes Inscriptions | Management</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --primary: #1e293b;
+        --accent: #d4af37;
+        --bg: #f8fafc;
+        --white: #ffffff;
+        --danger: #ef4444;
+        --success: #10b981;
+        --muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        color: var(--primary);
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      h1,
+      h2 {
+        color: var(--primary);
+        font-weight: 700;
+        margin: 0;
+      }
+
+      /* تصفيف قائمة التسجيلات */
+      .registration-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 5px solid var(--accent);
+        transition: transform 0.2s;
+      }
+
+      .registration-card:hover {
+        transform: translateX(5px);
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .status-active {
+        background: #dcfce7;
+        color: var(--success);
+      }
+      .status-cancelled {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+
+      .info-group h2 {
+        font-size: 1.1rem;
+        margin: 5px 0;
+      }
+      .details {
+        font-size: 0.85rem;
+        color: var(--muted);
+        display: flex;
+        gap: 15px;
+      }
+
+      /* نافذة التأكيد (Modal-like) */
+      .cancel-overlay {
+        background: var(--white);
+        border: 2px solid var(--danger);
+        border-radius: 20px;
+        padding: 30px;
+        margin-top: 40px;
+        text-align: center;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
+
+      /* الأزرار */
+      .btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.3s;
+        cursor: pointer;
+        border: none;
+        display: inline-block;
+      }
+
+      .status-badge{
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-success{
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-warning{
+    background: #fef3c7;
+    color: #b45309;
+}
+
+      .btn-cancel {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+      .btn-cancel:hover {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-confirm {
+        background: var(--danger);
+        color: white;
+        margin-top: 15px;
+        width: 100%;
+        max-width: 250px;
+      }
+      .btn-back {
+        background: #e2e8f0;
+        color: var(--primary);
+        margin-top: 10px;
+      }
+
+      .btn-nav {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .btn-nav:hover {
+        color: var(--accent);
+      }
+
+      @media (max-width: 600px) {
+        .registration-card {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+        .btn-cancel {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- قسم قائمة التسجيلات -->
+      <div class="section-header">
+        <h1>Mes inscriptions</h1>
+        <a href="{% url 'event_list' %}" class="btn-nav"
+          >← Retour aux événements</a
+        >
+      </div>
+
+      <div class="registration-list">
+        {% for registration in registrations %}
+        <div class="registration-card">
+          <div class="info-group">
+            <span
+              class="status-badge {% if registration.status == 'cancelled' %}status-cancelled{% else %}status-active{% endif %}"
+            >
+              {{ registration.status }}
+            </span>
+            <h2>{{ registration.event.title }}</h2>
+            <div class="details">
+              <span>📅 {{ registration.event.event_date|date:"d M Y" }}</span>
+              <span>🕐 {{ registration.event.event_time|time:"H:i" }}</span>
+              <span>📍 {{ registration.event.location }}</span>
+              <span>🎫 Quantité: {{ registration.quantity }}</span>
+            </div>
+          </div>
+
+          {% if registration.status == 'active' %}
+          <div class="actions" style="display: flex; gap: 10px">
+            <a
+              href="{% url 'ticket_detail' registration.id %}"
+              class="btn"
+              style="background: #0f172a; color: white"
+            >
+              Voir Ticket
+            </a>
+
+            <form
+              method="POST"
+              action="{% url 'cancel_registration' registration.id %}"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-cancel">Annuler</button>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+        {% empty %}
+
+        <div
+          style="
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+          "
+        >
+          <p style="color: var(--muted)">Aucune inscription trouvée.</p>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- WAITLIST SECTION -->
+
+      {% if waitlist_entries %}
+
+      <div style="margin-top: 50px">
+        <div class="section-header">
+          <h1>Liste d’attente</h1>
+        </div>
+
+        {% for entry in waitlist_entries %}
+
+        <div class="registration-card" style="border-left: 5px solid #f59e0b">
+          <div class="info-group">
+            <span
+  class="status-badge {% if entry.status == 'notified' %}status-success{% else %}status-warning{% endif %}"
+>
+  {{ entry.status }}
+</span>
+
+            <h2>{{ entry.event.title }}</h2>
+
+            <div class="details">
+              <span> 📅 {{ entry.event.event_date|date:"d M Y" }} </span>
+
+              <span> 🕐 {{ entry.event.event_time|time:"H:i" }} </span>
+
+              <span> 📍 {{ entry.event.location }} </span>
+
+              <span> 🎫 Quantité: {{ entry.quantity }} </span>
+            </div>
+          </div>
+
+          <div class="actions" style="display:flex; gap:10px;">
+
+    {% if entry.status == 'notified' %}
+    <a href="{% url 'payment_page' entry.event.id %}"
+       class="btn"
+       style="background:#0f172a;color:white;">
+        Pay Now
+    </a>
+    {% endif %}
+
+    <form method="POST"
+          action="{% url 'cancel_waitlist' entry.id %}">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-cancel">
+            Quitter
+        </button>
+    </form>
+
+</div>
+
+        {% endfor %}
+      </div>
+
+      {% endif %}
+
+      <hr style="margin: 50px 0; border: 0; border-top: 1px solid #e2e8f0" />
+
+      <!-- قسم تأكيد الإلغاء (non utilisé ici) -->
+      {% if false %}
+      <div class="cancel-overlay">
+        <span style="font-size: 2rem">⚠️</span>
+        <h2>Confirmer l'annulation</h2>
+        <p style="color: var(--muted)">
+          Êtes-vous sûr de vouloir annuler votre place pour :<br />
+          <strong style="color: var(--primary)"
+            >{{ ticket.event.title }}</strong
+          >
+          ?
+        </p>
+
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-confirm">
+            Oui, confirmer l'annulation
+          </button>
+        </form>
+        <br />
+        <a href="{% url 'my_registrations' %}" class="btn btn-back"
+          >Non, garder ma place</a
+        >
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

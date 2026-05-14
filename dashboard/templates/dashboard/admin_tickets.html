@@ -1,0 +1,81 @@
+{% extends "dashboard/admin_base.html" %}
+
+{% block title %}
+Manage Tickets
+{% endblock %}
+
+{% block page_title %}
+Manage Tickets
+{% endblock %}
+
+{% block content %}
+
+<table>
+
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Event</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Booked At</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for ticket in tickets %}
+
+        <tr>
+
+            <td>
+                <strong>{{ ticket.user.username }}</strong>
+            </td>
+
+            <td>
+                {{ ticket.event.title }}
+            </td>
+
+            <td>
+                {{ ticket.quantity }}
+            </td>
+
+            <td>
+
+                {% if ticket.status == 'active' %}
+
+                    <span class="status published">
+                        Active
+                    </span>
+
+                {% else %}
+
+                    <span class="status draft">
+                        Cancelled
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+                {{ ticket.booked_at|date:"M d, Y H:i" }}
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="5">
+                No tickets found.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

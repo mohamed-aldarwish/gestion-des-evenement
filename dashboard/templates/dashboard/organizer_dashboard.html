@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Organizer Hub | EventFiY Events</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-dark: #0f172a;
+        --accent-gold: #d4af37;
+        --success: #10b981;
+        --danger: #ef4444;
+        --bg-soft: #f1f5f9;
+        --white: #ffffff;
+        --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg-soft);
+        color: var(--primary-dark);
+        padding-bottom: 50px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      .stats-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .stat-box {
+        min-height: 120px;
+      }
+
+      @media (max-width: 900px) {
+        .stats-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .event-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 18px;
+    margin-bottom: 18px;
+}
+      /* Hero Header */
+      .page-header {
+        background: var(--primary-dark);
+        padding: 60px 0 100px 0; /* زدنا الـ padding لتحت باش يبان الـ Header مزيان */
+        border-radius: 0 0 40px 40px;
+        color: white;
+        box-shadow: var(--shadow-md);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .page-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .page-header p {
+        opacity: 0.7;
+        margin: 8px 0 0;
+        font-size: 1rem;
+      }
+
+      /* Stats Row - Overlapping effect */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-top: -50px; /* هادي هي اللي كتخليها تطلع فوق الـ Header */
+        position: relative;
+        z-index: 10;
+      }
+
+      .stat-box {
+        background: var(--white);
+        padding: 25px;
+        border-radius: 24px;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .stat-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+      }
+
+      /* Main Sections */
+      .content-section {
+        margin-top: 60px;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .section-header h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Events Grid */
+      .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+      }
+
+      .event-card {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 25px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .event-card:hover {
+        border-color: var(--accent-gold);
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-active {
+        background: #dcfce7;
+        color: #15803d;
+      }
+
+      .card-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      .card-meta span {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-meta i {
+        width: 18px;
+        color: var(--accent-gold);
+        font-size: 1rem;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 20px;
+      }
+
+      .btn-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+
+      .btn-edit {
+        background: #eff6ff;
+        color: #2563eb;
+      }
+      .btn-delete {
+        background: #fef2f2;
+        color: #ef4444;
+      }
+
+      .btn-edit:hover {
+        background: #2563eb;
+        color: white;
+      }
+      .btn-delete:hover {
+        background: #ef4444;
+        color: white;
+      }
+
+      /* Sales Card */
+      .sales-card {
+        background: var(--white);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sale-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 30px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .sale-item:last-child {
+        border-bottom: none;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .user-avatar {
+        width: 45px;
+        height: 45px;
+        background: #f1f5f9;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--primary-dark);
+        border: 1px solid #e2e8f0;
+      }
+
+      .btn-create-main {
+        background: var(--accent-gold);
+        color: var(--primary-dark);
+        padding: 14px 28px;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-create-main:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="container">
+        <div class="header-content">
+          <div>
+            <h1>Organizer Hub</h1>
+            <p>Welcome back, monitoring your events performance.</p>
+          </div>
+          <a href="{% url 'event_create' %}" class="btn-create-main">
+            <i class="fas fa-plus"></i> New Event
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-icon" style="background: #fff7ed; color: #f59e0b">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div>
+            <small style="color: #64748b; font-weight: 500"
+              >Active Events</small
+            >
+            <div style="font-size: 1.4rem; font-weight: 700">
+              {{ my_events.count|default:"1" }}
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-icon" style="background: #ecfdf5; color: #10b981">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+          <div>
+            <small style="color: #64748b; font-weight: 500"
+              >Total Tickets</small
+            >
+            <div style="font-size: 1.4rem; font-weight: 700">
+              {{ total_tickets|default:"0" }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-icon" style="background: #fef3c7; color: #d97706">
+          <i class="fas fa-clock"></i>
+        </div>
+
+        <div>
+          <small style="color: #64748b; font-weight: 500"> Waitlist </small>
+
+          <div style="font-size: 1.4rem; font-weight: 700">
+            {{ total_waitlist|default:"0" }}
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+
+    <div class="section-header">
+        <h2>
+            <i class="fas fa-chart-line"></i>
+            Revenue Analytics
+        </h2>
+    </div>
+
+    <div class="sales-card" style="padding:30px;">
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+            margin-bottom:35px;
+        ">
+
+            <div class="stat-box">
+                <div class="stat-icon"
+                     style="background:#ecfdf5;color:#10b981;">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+
+                <div>
+                    <small style="color:#64748b;">
+                        Total Revenue
+                    </small>
+
+                    <div style="
+                        font-size:1.6rem;
+                        font-weight:800;
+                    ">
+                        ${{ total_revenue }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon"
+                     style="background:#eff6ff;color:#2563eb;">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+
+                <div>
+                    <small style="color:#64748b;">
+                        Paid Tickets
+                    </small>
+
+                    <div style="
+                        font-size:1.6rem;
+                        font-weight:800;
+                    ">
+                        {{ total_tickets }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <canvas id="revenueChart"></canvas>
+
+    </div>
+
+</section>
+      <section class="content-section">
+  <div class="section-header">
+    <h2><i class="fas fa-layer-group"></i> My Active Events</h2>
+  </div>
+
+  <div class="events-grid">
+    {% for event in my_events %}
+    <div class="event-card">
+      {% if event.image %}
+      <img src="{{ event.image.url }}" class="event-image">
+      {% endif %}
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <h3 style="margin:0; font-size:1.2rem;">
+          {{ event.title|default:"Event Title" }}
+        </h3>
+        <span class="status-badge badge-active">Live</span>
+      </div>
+
+      <div class="card-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ event.event_date|date:"M d, Y" }}</span>
+        <span><i class="fas fa-map-marker-alt"></i> {{ event.location|default:"Casablanca" }}</span>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div style="height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;">
+          <div style="width:{% widthratio event.booked_seats event.capacity 100 %}%;background:#d4af37;height:100%;"></div>
+        </div>
+        <small style="color:#64748b;">
+          {{ event.booked_seats }} / {{ event.capacity }} seats booked
+        </small>
+      </div>
+
+      <div class="card-actions">
+        <a href="{% url 'event_update' event.id %}" class="btn-icon btn-edit" title="Edit">
+          <i class="fas fa-pen"></i>
+        </a>
+        <a href="{% url 'event_delete' event.id %}" class="btn-icon btn-delete" title="Delete">
+          <i class="fas fa-trash"></i>
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:40px;background:white;border-radius:20px;">
+      <p style="color:#64748b">You haven't created any active events yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="section-header">
+    <h2><i class="fas fa-file-alt"></i> Draft Events</h2>
+  </div>
+
+  <div class="events-grid">
+    {% for event in draft_events_list %}
+    <div class="event-card">
+      {% if event.image %}
+      <img src="{{ event.image.url }}" class="event-image">
+      {% endif %}
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <h3 style="margin:0; font-size:1.2rem;">
+          {{ event.title }}
+        </h3>
+        <span class="status-badge" style="background:#fef3c7;color:#92400e;">
+          Draft
+        </span>
+      </div>
+
+      <div class="card-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ event.event_date|date:"M d, Y" }}</span>
+        <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+      </div>
+
+      <div class="card-actions">
+        <a href="{% url 'event_update' event.id %}" class="btn-icon btn-edit" title="Edit">
+          <i class="fas fa-pen"></i>
+        </a>
+        <a href="{% url 'event_delete' event.id %}" class="btn-icon btn-delete" title="Delete">
+          <i class="fas fa-trash"></i>
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:40px;background:white;border-radius:20px;">
+      <p style="color:#64748b">Aucun brouillon disponible.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2><i class="fas fa-shopping-cart"></i> Recent Sales Activity</h2>
+        </div>
+
+        <div class="sales-card">
+          {% for ticket in my_tickets %}
+          <div class="sale-item">
+            <div class="user-info">
+              <div class="user-avatar">
+                {{ ticket.user.username|first|upper }}
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: 1rem">
+                  {{ ticket.user.username }}
+                </div>
+                <div style="font-size: 0.85rem; color: #64748b">
+                  Purchased for: {{ ticket.event.title }}
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right">
+              <div style="font-weight: 700; color: var(--success)">
+                + {{ ticket.quantity }} Ticket(s)
+              </div>
+              <div style="font-size: 0.8rem; color: #94a3b8">
+                {{ ticket.booked_at|timesince }} ago
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div style="padding: 60px; text-align: center; color: #94a3b8">
+            <i
+              class="fas fa-inbox"
+              style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5"
+            ></i>
+            <p>No sales activity recorded yet.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="content-section">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-hourglass-half"></i>
+            Waitlist Activity
+          </h2>
+        </div>
+
+        <div class="sales-card">
+          {% for entry in waitlist_entries %}
+
+          <div class="sale-item">
+            <div class="user-info">
+              <div class="user-avatar">
+                {{ entry.user.username|first|upper }}
+              </div>
+
+              <div>
+                <div style="font-weight: 600; font-size: 1rem">
+                  {{ entry.user.username }}
+                </div>
+
+                <div style="font-size: 0.85rem; color: #64748b">
+                  Waiting for: {{ entry.event.title }}
+                </div>
+              </div>
+            </div>
+
+            <div style="text-align: right">
+              <div style="font-weight: 700; color: #d97706">
+                {{ entry.quantity }} Ticket(s)
+              </div>
+
+              <div style="font-size: 0.8rem; color: #94a3b8">
+                {{ entry.created_at|timesince }} ago
+              </div>
+            </div>
+          </div>
+
+          {% empty %}
+
+          <div style="padding: 60px; text-align: center; color: #94a3b8">
+            <i
+              class="fas fa-check-circle"
+              style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5"
+            ></i>
+
+            <p>No users in waitlist.</p>
+          </div>
+
+          {% endfor %}
+        </div>
+      </section>
+
+      <div style="text-align: center; margin-top: 60px">
+        <a
+          href="{% url 'event_list' %}"
+          style="
+            text-decoration: none;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 500;
+          "
+        >
+          <i class="fas fa-arrow-left" style="margin-right: 8px"></i> Back to
+          Main Website
+        </a>
+      </div>
+    </div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById('revenueChart');
+
+new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+
+        labels: [
+            'Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'
+        ],
+
+        datasets: [{
+
+            label: 'Revenue',
+
+            data: {{ revenue_chart_data|safe }},
+
+            borderColor: '#d4af37',
+
+            backgroundColor: 'rgba(212,175,55,0.15)',
+
+            fill: true,
+
+            tension: 0.4
+        }]
+    },
+
+    options: {
+        responsive:true
+    }
+});
+
+</script>
+</html>

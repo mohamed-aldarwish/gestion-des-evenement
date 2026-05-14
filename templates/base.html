@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Event App{% endblock %} | EMSI Project</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- إضافة FontAwesome للأيقونات -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #0f172a;
+        --secondary: #1e293b;
+        --accent: #38bdf8; /* تم تغيير الذهبي إلى الأزرق السماوي ليتناسق مع الـ Admin */
+        --bg: #f8fafc;
+        --white: #ffffff;
+        --text-nav: #e2e8f0;
+        --danger: #ef4444;
+        --success: #10b981;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--primary);
+        min-height: 100vh;
+      }
+
+      /* --- Navbar --- */
+      .navbar {
+        background: var(--primary);
+        padding: 0 30px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-logo {
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 1.4rem;
+        text-decoration: none;
+        letter-spacing: 1px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .nav-links a {
+        color: var(--text-nav);
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .user-badge {
+        background: var(--accent);
+        color: var(--primary) !important;
+        font-weight: 700;
+      }
+
+      /* --- Messages Alert --- */
+      .messages-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1001;
+        max-width: 400px;
+      }
+
+      .alert {
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.4s ease-out;
+      }
+
+      .alert-success {
+        background: var(--success);
+      }
+      .alert-error,
+      .alert-danger {
+        background: var(--danger);
+      }
+      .alert-warning {
+        background: #f59e0b;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* --- Layout Structure --- */
+      .main-wrapper {
+        display: flex;
+        min-height: calc(100vh - 140px);
+      }
+
+      .sidebar {
+        width: 260px;
+        background: var(--white);
+        border-right: 1px solid #e2e8f0;
+        padding: 30px 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .sidebar a {
+        text-decoration: none;
+        color: var(--primary);
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .sidebar a i {
+        width: 20px;
+        color: var(--accent);
+      }
+
+      .sidebar a:hover,
+      .sidebar a.active {
+        background: #f1f5f9;
+        color: var(--accent);
+      }
+
+      .messages {
+    position: fixed;
+    top: 90px;
+    right: 30px;
+    z-index: 9999;
+}
+
+.alert,
+.message {
+    background: #0f172a !important;
+    color: white !important;
+    padding: 16px 22px;
+    border-radius: 14px;
+    font-weight: 600;
+    box-shadow: 0 15px 35px rgba(0,0,0,.15);
+    margin-bottom: 12px;
+}
+
+.alert-info {
+    background: #1e293b !important;
+    color: #fff !important;
+}
+
+.alert-success {
+    background: #166534 !important;
+    color: white !important;
+}
+
+.alert-warning {
+    background: #92400e !important;
+    color: white !important;
+}
+
+.alert-danger {
+    background: #991b1b !important;
+    color: white !important;
+}
+
+      .content-area {
+        flex: 1;
+        padding: 40px;
+      }
+
+      /* --- Footer --- */
+      footer {
+        text-align: center;
+        padding: 30px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        background: var(--white);
+        border-top: 1px solid #e2e8f0;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          flex-direction: column;
+          height: auto;
+          padding: 15px;
+          gap: 15px;
+        }
+        .main-wrapper {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid #e2e8f0;
+          height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Messages Flash -->
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        <i
+          class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"
+        ></i>
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Header / Navbar -->
+    <nav class="navbar">
+      <a href="{% url 'event_list' %}" class="nav-logo">EventFiY</a>
+
+      <div class="nav-links">
+       <div class="nav-links">
+
+    {% if user.is_superuser %}
+        <a href="{% url 'admin_events' %}">
+            <i class="fas fa-calendar-alt"></i> Événements
+        </a>
+    {% else %}
+        <a href="{% url 'event_list' %}">
+            <i class="fas fa-calendar-alt"></i> Événements
+        </a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+
+        {% if user.profile.role == 'user' %}
+            <a href="{% url 'my_registrations' %}">
+                <i class="fas fa-ticket-alt"></i> Mes Inscriptions
+            </a>
+        {% endif %}
+
+        {% if user.profile.role == 'organizer' %}
+            <a href="{% url 'organizer_dashboard' %}" style="border: 1px solid var(--accent);">
+                Dashboard Pro
+            </a>
+        {% endif %}
+
+        {% if user.is_superuser %}
+            <a href="{% url 'admin_dashboard' %}" style="color: var(--accent);">
+                <i class="fas fa-user-shield"></i> Admin
+            </a>
+        {% endif %}
+
+        <a href="{% url 'profile' %}" class="user-badge">
+            <i class="fas fa-user-circle"></i> {{ user.username }}
+        </a>
+
+        <a href="{% url 'logout' %}" style="color: var(--danger);">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+
+    {% else %}
+
+        <a href="{% url 'login' %}">Connexion</a>
+
+        <a href="{% url 'register' %}" style="background: var(--accent); color: var(--primary);">
+            S'inscrire
+        </a>
+
+    {% endif %}
+
+</div>
+    </nav>
+
+<div class="main-wrapper">
+    <main class="content-area">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+    <footer>
+      &copy; 2026 <strong>Event Manager</strong> - EMSI Casablanca (3iIR)
+      <br />Développé par Anwar Elbalghiti & Mohamed Aldarwish
+    </footer>
+
+    <script>
+      // إخفاء رسائل التنبيه تلقائياً بعد 4 ثوانٍ
+      setTimeout(function () {
+        const messages = document.querySelectorAll(".alert");
+        messages.forEach((msg) => {
+          msg.style.transition = "0.5s";
+          msg.style.opacity = "0";
+          setTimeout(() => msg.remove(), 500);
+        });
+      }, 4000);
+    </script>
+  </body>
+</html>

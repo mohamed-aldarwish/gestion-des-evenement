@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}My Tickets | Grand Luxe{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --ticket-bg: #ffffff;
+        --ticket-border: #e2e8f0;
+        --accent: #d4af37;
+        --dark: #1a1a1a;
+    }
+
+    .tickets-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 30px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* تصميم التذكرة الاحترافي */
+    .ticket-card {
+        background: var(--ticket-bg);
+        display: flex;
+        margin-bottom: 25px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid var(--ticket-border);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .ticket-card:hover {
+        transform: scale(1.02);
+    }
+
+    /* الجزء الأيسر (التفاصيل) */
+    .ticket-main {
+        flex: 3;
+        padding: 25px;
+        border-right: 2px dashed #e2e8f0;
+        position: relative;
+    }
+
+    /* الدوائر الجانبية لإعطاء شكل التذكرة */
+    .ticket-main::after, .ticket-main::before {
+        content: '';
+        position: absolute;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        background: #f0f2f5; /* لون خلفية الصفحة الأساسي */
+        border-radius: 50%;
+    }
+    .ticket-main::before { top: -10px; }
+    .ticket-main::after { bottom: -10px; }
+
+    .ticket-event-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 15px;
+    }
+
+    .ticket-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .info-item {
+        font-size: 0.85rem;
+    }
+
+    .info-item label {
+        display: block;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 0.7rem;
+    }
+
+    .info-item span {
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    /* الجزء الأيمن (الباركود أو زر الإجراء) */
+    .ticket-stub {
+        flex: 1;
+        background: #fafafa;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .qr-placeholder {
+        font-size: 3rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+        opacity: 0.8;
+    }
+
+    .btn-detail {
+        background: var(--dark);
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: 0.3s;
+        width: 100%;
+    }
+
+    .btn-detail:hover {
+        background: var(--accent);
+        color: var(--dark);
+    }
+
+    /* تنسيق حالة "لا توجد تذاكر" */
+    .empty-tickets {
+        text-align: center;
+        background: white;
+        padding: 50px;
+        border-radius: 20px;
+        border: 2px dashed #cbd5e1;
+    }
+
+    .empty-tickets i {
+        font-size: 4rem;
+        color: #e2e8f0;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+        .ticket-card { flex-direction: column; }
+        .ticket-main { border-right: none; border-bottom: 2px dashed #e2e8f0; }
+        .ticket-main::after, .ticket-main::before { display: none; }
+    }
+</style>
+
+<div class="tickets-container">
+    <h1 class="page-title">🎟️ My Digital Tickets</h1>
+
+    {% for ticket in tickets %}
+        <div class="ticket-card">
+            <div class="ticket-main">
+                <div class="ticket-event-name">{{ ticket.event.title }}</div>
+                
+                <div class="ticket-info-grid">
+                    <div class="info-item">
+                        <label>Date & Time</label>
+                        <span>{{ ticket.event.event_date }} @ {{ ticket.event.event_time }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Location</label>
+                        <span>{{ ticket.event.location }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Quantity</label>
+                        <span>{{ ticket.quantity }} Person(s)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Order Reference</label>
+                        <span>#GL-{{ ticket.id }}{{ ticket.booked_at|date:"is" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-stub">
+                <div class="qr-placeholder">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <p style="font-size: 0.6rem; color: #94a3b8; margin-bottom: 15px;">SCAN AT ENTRANCE</p>
+                <a href="{% url 'event_detail' ticket.event.id %}" class="btn-detail">VIEW EVENT</a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-tickets">
+            <i class="fas fa-ticket-alt"></i>
+            <h3>No Tickets Found</h3>
+            <p style="color: #64748b; margin-bottom: 25px;">It seems you haven't booked any luxury experiences yet.</p>
+            <a href="{% url 'event_list' %}" class="btn-detail" style="display: inline-block; width: auto; padding: 12px 30px;">Browse Events</a>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- إضافة FontAwesome إذا لم يكن موجوداً في base.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

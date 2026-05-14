@@ -1,0 +1,183 @@
+{% extends "dashboard/admin_base.html" %}
+
+{% block title %}Admin Overview{% endblock %}
+
+{% block page_title %}Admin Overview{% endblock %}
+
+{% block content %}
+
+<style>
+    .overview-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .overview-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 24px;
+    }
+
+    .overview-card i {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #d4af37;
+    }
+
+    .overview-card h3 {
+        color: #64748b;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .overview-card h1 {
+        margin-top: 8px;
+        font-size: 2rem;
+        color: #0f172a;
+    }
+
+    .section-title {
+        margin: 35px 0 18px;
+        font-size: 1.3rem;
+        color: #0f172a;
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .quick-btn {
+        text-decoration: none;
+        background: #0f172a;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .quick-btn.secondary {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+    @media (max-width: 1000px) {
+        .overview-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .overview-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="quick-actions">
+    <a href="{% url 'event_create' %}" class="quick-btn">
+        <i class="fas fa-plus"></i> Create Event
+    </a>
+
+
+</div>
+
+<div class="overview-grid">
+
+    <div class="overview-card">
+        <i class="fas fa-users"></i>
+        <h3>Total Users</h3>
+        <h1>{{ total_users|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Total Events</h3>
+        <h1>{{ total_events|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-check-circle"></i>
+        <h3>Published Events</h3>
+        <h1>{{ published_events|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-ticket-alt"></i>
+        <h3>Total Tickets</h3>
+        <h1>{{ total_tickets|default:"0" }}</h1>
+    </div>
+
+</div>
+
+<h2 class="section-title">Recent Events</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for event in recent_events %}
+        <tr>
+            <td><strong>{{ event.title }}</strong></td>
+
+            <td>
+                {% if event.status == 'published' %}
+                    <span class="status published">Published</span>
+                {% else %}
+                    <span class="status draft">Draft</span>
+                {% endif %}
+            </td>
+
+            <td>{{ event.event_date|date:"M d, Y" }}</td>
+            <td>{{ event.location|default:"TBA" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No recent events.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 class="section-title">Recent Tickets</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Event</th>
+            <th>Quantity</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for ticket in recent_tickets %}
+        <tr>
+            <td><strong>{{ ticket.user.username }}</strong></td>
+            <td>{{ ticket.event.title }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.booked_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No recent tickets.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Ticket
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .ticket-wrapper {
+    max-width: 900px;
+    margin: 50px auto;
+  }
+
+  .ticket-card {
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+  }
+
+  .ticket-header {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    padding: 50px;
+    position: relative;
+  }
+
+  .ticket-category {
+    background: rgba(212, 175, 55, 0.2);
+    color: #d4af37;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .ticket-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .ticket-code {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+  }
+
+  .ticket-body {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 40px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .info-card {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 20px;
+  }
+
+  .info-label {
+    color: #64748b;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .info-value {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .qr-box {
+    background: #f8fafc;
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+  }
+
+  .qr-box img {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    background: white;
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .ticket-status {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-weight: 700;
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  @media (max-width: 768px) {
+    .ticket-body {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ticket-title {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<div class="ticket-wrapper">
+  <div class="ticket-card">
+    <div class="ticket-header">
+      <div class="ticket-category">{{ ticket.event.category }}</div>
+
+      <div class="ticket-title">{{ ticket.event.title }}</div>
+
+      <div class="ticket-code">Ticket ID: {{ ticket.ticket_code }}</div>
+    </div>
+
+    <div class="ticket-body">
+      <div>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-label">Participant</div>
+
+            <div class="info-value">{{ ticket.user.username }}</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-label">Quantity</div>
+
+            <div class="info-value">{{ ticket.quantity }}</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-label">Date</div>
+
+            <div class="info-value">{{ ticket.event.event_date }}</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-label">Time</div>
+
+            <div class="info-value">{{ ticket.event.event_time }}</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-label">Location</div>
+
+            <div class="info-value">{{ ticket.event.location }}</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-label">Booking Date</div>
+
+            <div class="info-value">{{ ticket.booked_at|date:"M d, Y" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qr-box">
+        {% if ticket.qr_code %}
+
+        <img src="{{ ticket.qr_code.url }}" />
+
+        {% endif %}
+
+        <div class="ticket-status">{{ ticket.status }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

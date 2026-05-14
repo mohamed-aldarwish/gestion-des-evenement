@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if event %}Modifier{% else %}Créer{% endif %} événement</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #0f172a;
+        --accent: #d4af37;
+        --accent-hover: #b8962d;
+        --bg: #f8fafc;
+        --white: #ffffff;
+        --border: #e2e8f0;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+      }
+      input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  background: #fcfdff;
+  color: #64748b;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 12px;
+  margin-right: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: #d4af37;
+  color: #0f172a;
+}
+      * {
+        box-sizing: border-box;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .form-container {
+        max-width: 800px;
+        width: 100%;
+        background: var(--white);
+        padding: 50px;
+        border-radius: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+        position: relative;
+      }
+
+      /* رأس النموذج */
+      .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .form-header h1 {
+        color: var(--primary);
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+
+      .form-header p {
+        color: var(--text-muted);
+        margin-top: 10px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+      }
+
+      .full-width {
+        grid-column: span 2;
+      }
+
+      .form-group {
+        position: relative;
+      }
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      label i {
+        color: var(--accent);
+        font-size: 1rem;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #fcfdfe;
+      }
+
+      textarea {
+        min-height: 120px;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+      }
+
+     .actions {
+    margin-top: 50px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+}
+
+      button[type="submit"] {
+        flex: 2;
+        padding: 16px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      button[type="submit"]:hover {
+        background: var(--accent);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+      }
+
+      .btn-back {
+        flex: 1;
+        text-align: center;
+        padding: 16px;
+        background: #f1f5f9;
+        color: var(--text-main);
+        text-decoration: none;
+        border-radius: 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .btn-back:hover {
+        background: #e2e8f0;
+      }
+
+      /* ميزة إضافية: تنبيه عند اختيار تاريخ قديم */
+      .date-warning {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 5px;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .full-width {
+          grid-column: span 1;
+        }
+        .form-container {
+          padding: 30px;
+        }
+        .actions {
+          flex-direction: column-reverse;
+        }
+        .actions .btn-back,
+.actions button {
+    min-width: 190px;
+}
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="form-container">
+      <div class="form-header">
+     <h1>
+    {% if event %}
+        Modifier l'événement
+    {% else %}
+        Nouvel Événement
+    {% endif %}
+</h1>
+        <p>
+          Remplissez les informations ci-dessous pour publier votre événement.
+        </p>
+      </div>
+
+      <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-grid">
+          <!-- Titre -->
+          <div class="form-group full-width">
+            <label><i class="fas fa-heading"></i> Titre de l'événement</label>
+            <input
+              type="text"
+              name="title"
+              value="{{ event.title|default:'' }}"
+              placeholder="Ex: Conférence sur l'IA à ......"
+              required
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="form-group full-width">
+            <label
+              ><i class="fas fa-align-left"></i> Description détaillée</label
+            >
+            <textarea
+              name="description"
+              placeholder="Décrivez votre événement..."
+            >
+{{ event.description|default:'' }}</textarea
+            >
+          </div>
+
+          <!-- Date -->
+          <div class="form-group">
+            <label><i class="fas fa-calendar-alt"></i> Date</label>
+            <input
+              type="date"
+              name="event_date"
+              id="event_date"
+              value="{{ event.event_date|date:'Y-m-d' }}"
+              required
+            />
+            <span class="date-warning" id="date-alert"
+              >La date ne peut pas être dans le passé !</span
+            >
+          </div>
+
+          <!-- Heure -->
+          <div class="form-group">
+            <label><i class="fas fa-clock"></i> Heure</label>
+            <input
+              type="time"
+              name="event_time"
+              value="{{ event.event_time|time:'H:i' }}"
+              required
+            />
+          </div>
+
+          <!-- Lieu -->
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Lieu</label>
+            <input
+              type="text"
+              name="location"
+              value="{{ event.location|default:'' }}"
+              placeholder="Ex: 123 Rue de ......"
+              required
+            />
+          </div>
+
+          <!-- Capacité -->
+          <div class="form-group">
+            <label><i class="fas fa-users"></i> Capacité</label>
+            <input
+              type="number"
+              name="capacity"
+              value="{{ event.capacity|default:'' }}"
+              min="1"
+              placeholder="Ex: 100"
+              required
+            />
+          </div>
+
+        <!-- Prix -->
+<div class="form-group">
+    <label><i class="fas fa-dollar-sign"></i> Prix</label>
+    <input
+        type="number"
+        step="0.01"
+        min="0"
+        name="price"
+        value="{% if event.price %}{{ event.price }}{% endif %}"
+placeholder="Ex: 49.99"
+        required
+    />
+</div>
+
+<!-- Image -->
+<div class="form-group">
+    <label><i class="fas fa-image"></i> Image de l'événement</label>
+    <input type="file" name="image" accept="image/*">
+
+    {% if event.image %}
+        <div style="margin-top:15px;">
+            <img src="{{ event.image.url }}" style="
+    width:100%;
+    max-width:260px;
+    height:150px;
+    object-fit:cover;
+    border-radius:16px;
+    border:1px solid #e2e8f0;
+    margin-top:12px;
+">
+        </div>
+    {% endif %}
+</div>
+
+<!-- Catégorie -->
+<div class="form-group">
+    <label><i class="fas fa-tag"></i> Catégorie</label>
+    <select name="category">
+        <option value="Music" {% if event.category == "Music" %}selected{% endif %}>Musique & Concert</option>
+        <option value="Gaming" {% if event.category == "Gaming" %}selected{% endif %}>Gaming & Esports</option>
+        <option value="Tech" {% if event.category == "Tech" %}selected{% endif %}>Technologie</option>
+        <option value="Art" {% if event.category == "Art" %}selected{% endif %}>Art & Culture</option>
+        <option value="Sport" {% if event.category == "Sport" %}selected{% endif %}>Sport</option>
+        <option value="Education" {% if event.category == "Education" %}selected{% endif %}>Éducation</option>
+    </select>
+</div>
+
+<!-- Statut -->
+<div class="form-group">
+    <label><i class="fas fa-info-circle"></i> Statut</label>
+    <select name="status" required>
+        <option value="draft" {% if event.status == "draft" or not event %}selected{% endif %}>Brouillon</option>
+        <option value="published" {% if event.status == "published" %}selected{% endif %}>Publier directement</option>
+    </select>
+</div>
+        <div class="actions">
+          <a href="{% url 'event_list' %}" class="btn-back">Annuler</a>
+          <button type="submit">
+            <i class="fas fa-save"></i>
+            {% if event %}Mettre à jour{% else %}Créer l'événement{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // تحسين تجربة المستخدم: منع اختيار تاريخ قديم
+      const dateInput = document.getElementById("event_date");
+      const alertMsg = document.getElementById("date-alert");
+
+      dateInput.addEventListener("change", function () {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate < today) {
+          alertMsg.style.display = "block";
+          this.style.borderColor = "#ef4444";
+        } else {
+          alertMsg.style.display = "none";
+          this.style.borderColor = "var(--accent)";
+        }
+      });
+
+      // تأثير زر الإرسال
+      document.querySelector("form").addEventListener("submit", function () {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+        btn.style.pointerEvents = "none";
+      });
+    </script>
+  </body>
+</html>

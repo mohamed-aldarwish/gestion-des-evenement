@@ -1,0 +1,259 @@
+{% extends "dashboard/admin_base.html" %}
+
+{% block title %}
+Manage Events
+{% endblock %}
+
+{% block page_title %}
+Manage Events
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .top-bar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+        gap:20px;
+        flex-wrap:wrap;
+    }
+
+    .search-form{
+        display:flex;
+        gap:15px;
+        flex-wrap:wrap;
+        width:100%;
+    }
+
+    .search-input,
+    .filter-select{
+        padding:12px 16px;
+        border:1px solid #e2e8f0;
+        border-radius:12px;
+        background:#f8fafc;
+        min-width:220px;
+        outline:none;
+    }
+
+    .search-btn{
+        background:#0f172a;
+        color:white;
+        border:none;
+        padding:12px 20px;
+        border-radius:12px;
+        font-weight:700;
+        cursor:pointer;
+    }
+
+    .create-btn{
+        text-decoration:none;
+        background:#d4af37;
+        color:#0f172a;
+        padding:12px 18px;
+        border-radius:12px;
+        font-weight:700;
+        white-space:nowrap;
+    }
+
+    .results-text{
+        margin-bottom:18px;
+        color:#64748b;
+        font-size:.95rem;
+    }
+
+    .event-thumb{
+        width:58px;
+        height:58px;
+        object-fit:cover;
+        border-radius:14px;
+        border:1px solid #e2e8f0;
+    }
+
+    .no-image{
+        font-size:.75rem;
+        color:#94a3b8;
+    }
+
+</style>
+
+<div class="top-bar">
+
+    <form method="GET" class="search-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search event..."
+            class="search-input"
+        >
+
+        <select name="status" class="filter-select">
+
+            <option value="">
+                All Status
+            </option>
+
+            <option value="published"
+                {% if status == 'published' %}selected{% endif %}>
+                Published
+            </option>
+
+            <option value="draft"
+                {% if status == 'draft' %}selected{% endif %}>
+                Draft
+            </option>
+
+        </select>
+
+        <button type="submit" class="search-btn">
+            Search
+        </button>
+
+    </form>
+
+    <a href="{% url 'event_create' %}" class="create-btn">
+        + Create Event
+    </a>
+
+</div>
+
+<div class="results-text">
+    Total Events:
+    <strong>{{ events.count }}</strong>
+</div>
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Image</th>
+            <th>Event</th>
+            <th>Organizer</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for event in events %}
+
+        <tr>
+
+            <td>
+
+                {% if event.image %}
+
+                    <img
+                        src="{{ event.image.url }}"
+                        class="event-thumb"
+                    >
+
+                {% else %}
+
+                    <span class="no-image">
+                        No image
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <strong>
+                    {{ event.title }}
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ event.organizer.username }}
+
+            </td>
+
+            <td>
+
+                {% if event.status == 'published' %}
+
+                    <span class="status published">
+                        Published
+                    </span>
+
+                {% else %}
+
+                    <span class="status draft">
+                        Draft
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {{ event.event_date }}
+
+            </td>
+
+            <td>
+
+                {{ event.capacity }}
+
+            </td>
+
+            <td style="display:flex; gap:10px;">
+
+                <a
+                    href="{% url 'event_detail' event.id %}"
+                    class="action-btn view-btn"
+                >
+                    View
+                </a>
+
+                <a
+                    href="{% url 'event_update' event.id %}"
+                    class="action-btn edit-btn"
+                >
+                    Edit
+                </a>
+
+                <a
+                    href="{% url 'event_delete' event.id %}"
+                    class="action-btn delete-btn"
+                >
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7">
+                No events found.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
