@@ -131,6 +131,14 @@
         color: var(--dark);
     }
 
+    .btn-cancel {
+        background: #991b1b;
+        color: white;
+        border: none;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
     /* تنسيق حالة "لا توجد تذاكر" */
     .empty-tickets {
         text-align: center;
@@ -187,6 +195,10 @@
                 </div>
                 <p style="font-size: 0.6rem; color: #94a3b8; margin-bottom: 15px;">SCAN AT ENTRANCE</p>
                 <a href="{% url 'event_detail' ticket.event.id %}" class="btn-detail">VIEW EVENT</a>
+                <form method="post" action="{% url 'cancel_ticket' ticket.id %}" style="width:100%;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-detail btn-cancel">CANCEL</button>
+                </form>
             </div>
         </div>
     {% empty %}

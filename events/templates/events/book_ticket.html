@@ -1,247 +1,256 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Book Ticket | {{ event.title }}</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Ticket | {{ event.title }}</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-  <style>
-    :root {
-      --primary: #0f172a;
-      --accent: #d4af37;
-      --success: #10b981;
-      --warning: #b45309;
-      --bg: #f1f5f9;
-      --white: #ffffff;
-      --muted: #64748b;
-    }
+    <style>
+      :root {
+        --primary: #0f172a;
+        --accent: #d4af37;
+        --success: #10b981;
+        --warning: #b45309;
+        --bg: #f1f5f9;
+        --white: #ffffff;
+        --muted: #64748b;
+      }
 
-    * {
-      box-sizing: border-box;
-      font-family: "Plus Jakarta Sans", sans-serif;
-    }
+      * {
+        box-sizing: border-box;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
 
-    body {
-      margin: 0;
-      background-color: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
 
-    .booking-card {
-      background: var(--white);
-      max-width: 480px;
-      width: 100%;
-      border-radius: 30px;
-      overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-    }
+      .booking-card {
+        background: var(--white);
+        max-width: 480px;
+        width: 100%;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+      }
 
-    .header-section {
-      background: var(--primary);
-      color: white;
-      padding: 42px 30px;
-      text-align: center;
-    }
+      .header-section {
+        background: var(--primary);
+        color: white;
+        padding: 42px 30px;
+        text-align: center;
+      }
 
-    .event-badge {
-      background: rgba(212, 175, 55, 0.2);
-      color: var(--accent);
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 15px;
-      display: inline-block;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-    }
+      .event-badge {
+        background: rgba(212, 175, 55, 0.2);
+        color: var(--accent);
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        display: inline-block;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+      }
 
-    .header-section h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      font-weight: 800;
-      line-height: 1.2;
-    }
+      .header-section h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.2;
+      }
 
-    .header-section p {
-      opacity: 0.7;
-      font-size: 0.9rem;
-      margin-top: 10px;
-      margin-bottom: 0;
-    }
+      .header-section p {
+        opacity: 0.7;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
 
-    .booking-body {
-      padding: 40px 35px;
-    }
+      .booking-body {
+        padding: 40px 35px;
+      }
 
-    .availability-box {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      border: 1px solid #e2e8f0;
-    }
+      .availability-box {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border: 1px solid #e2e8f0;
+      }
 
-    .availability-box span:first-child {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
+      .availability-box span:first-child {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
 
-    .seats-tag {
-      background: var(--success);
-      color: white;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 0.85rem;
-    }
+      .seats-tag {
+        background: var(--success);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.85rem;
+      }
 
-    .content-box {
-      text-align: center;
-      margin: 28px 0;
-    }
+      .content-box {
+        text-align: center;
+        margin: 28px 0;
+      }
 
-    .content-box i {
-      font-size: 2.2rem;
-      color: var(--accent);
-      margin-bottom: 16px;
-    }
+      .content-box i {
+        font-size: 2.2rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
 
-    .content-box h2 {
-      font-size: 1.45rem;
-      color: var(--primary);
-      margin: 0 0 12px;
-    }
+      .content-box h2 {
+        font-size: 1.45rem;
+        color: var(--primary);
+        margin: 0 0 12px;
+      }
 
-    .content-box p {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin: 0;
-    }
+      .content-box p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+      }
 
-    .btn-main,
-    .payment-link {
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 20px;
-      border-radius: 18px;
-      font-size: 1.05rem;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      transition: 0.3s;
-      text-decoration: none;
-    }
+      .btn-main,
+      .payment-link {
+        width: 100%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 20px;
+        border-radius: 18px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        transition: 0.3s;
+        text-decoration: none;
+      }
 
-    .btn-main:hover,
-    .payment-link:hover {
-      background: #1e293b;
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(15, 23, 42, 0.2);
-    }
+      .btn-main:hover,
+      .payment-link:hover {
+        background: #1e293b;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(15, 23, 42, 0.2);
+      }
 
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 25px;
-      color: #94a3b8;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: 0.3s;
-    }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 25px;
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+      }
 
-    .back-link:hover {
-      color: var(--accent);
-    }
-  </style>
-</head>
+      .back-link:hover {
+        color: var(--accent);
+      }
+    </style>
+  </head>
 
-<body>
-  <div class="booking-card">
-    <div class="header-section">
-      <span class="event-badge">
-        <i class="fas fa-shield-alt"></i> Official Booking
-      </span>
+  <body>
+    <div class="booking-card">
+      <div class="header-section">
+        <span class="event-badge">
+          <i class="fas fa-shield-alt"></i> Official Booking
+        </span>
 
-      <h1>{{ event.title }}</h1>
-      <p>{{ event.location }}</p>
-    </div>
-
-    <div class="booking-body">
-      <div class="availability-box">
-        <span>Remaining Capacity</span>
-        <span class="seats-tag">{{ remaining_seats }} Seats</span>
+        <h1>{{ event.title }}</h1>
+        <p>{{ event.location }}</p>
       </div>
 
-      {% if remaining_seats <= 0 %}
-      <form method="POST" action="" id="bookingForm">
-        {% csrf_token %}
-
-        <div class="content-box">
-          <i class="fas fa-clock"></i>
-
-          <h2>Event Full</h2>
-
-          <p>
-            This event is currently full. Join the waiting list and we will notify you when a seat becomes available.
-          </p>
+      <div class="booking-body">
+        <div class="availability-box">
+          <span>Remaining Capacity</span>
+          <span class="seats-tag">{{ remaining_seats }} Seats</span>
         </div>
 
-        <button type="submit" class="btn-main" id="confirmBtn">
-          <span>Join Waiting List</span>
-          <i class="fas fa-clock"></i>
-        </button>
-      </form>
-      {% else %}
-      <div class="content-box">
-        <i class="fas fa-credit-card"></i>
+        {% if remaining_seats <= 0 %}
+        <form method="POST" action="" id="bookingForm">
+          {% csrf_token %}
 
-        <h2>Seats Available</h2>
+          <div class="content-box">
+            <i class="fas fa-clock"></i>
 
-        <p>
-          Continue to secure payment to confirm your reservation.
-        </p>
+            <h2>Event Full</h2>
+
+            <p>
+              This event is currently full. Join the waiting list and we will
+              notify you when a seat becomes available.
+            </p>
+          </div>
+
+          <button type="submit" class="btn-main" id="confirmBtn">
+            <span>Join Waiting List</span>
+            <i class="fas fa-clock"></i>
+          </button>
+        </form>
+        {% else %}
+        <div class="content-box">
+          <i class="fas fa-credit-card"></i>
+
+          <h2>Seats Available</h2>
+
+          <p>Continue to secure payment to confirm your reservation.</p>
+        </div>
+
+        <a
+          href="{% url 'tickets:payment_page' event.id %}"
+          class="payment-link"
+        >
+          <span>Book Now</span>
+          <i class="fas fa-credit-card"></i>
+        </a>
+        {% endif %}
+
+        <a href="{% url 'event_detail' event.id %}" class="back-link">
+          Cancel and return to event
+        </a>
       </div>
-
-      <a href="{% url 'payment_page' event.id %}" class="payment-link">
-        <span>Pay & Reserve</span>
-        <i class="fas fa-credit-card"></i>
-      </a>
-      {% endif %}
-
-      <a href="{% url 'event_detail' event.id %}" class="back-link">
-        Cancel and return to event
-      </a>
     </div>
-  </div>
 
-  <script>
-    const form = document.getElementById("bookingForm");
+    <script>
+      const form = document.getElementById("bookingForm");
 
-    if (form) {
-      form.onsubmit = function () {
-        const btn = document.getElementById("confirmBtn");
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        btn.disabled = true;
-      };
-    }
-  </script>
-</body>
+      if (form) {
+        form.onsubmit = function () {
+          const btn = document.getElementById("confirmBtn");
+          btn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Processing...';
+          btn.disabled = true;
+        };
+      }
+    </script>
+  </body>
 </html>

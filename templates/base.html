@@ -16,14 +16,13 @@
 
     <style>
       :root {
-        --primary: #0f172a;
-        --secondary: #1e293b;
-        --accent: #38bdf8; /* تم تغيير الذهبي إلى الأزرق السماوي ليتناسق مع الـ Admin */
-        --bg: #f8fafc;
-        --white: #ffffff;
-        --text-nav: #e2e8f0;
-        --danger: #ef4444;
-        --success: #10b981;
+        --primary: #0b1533;
+        --accent: #d4af37;
+        --sky: #38bdf8;
+        --card: #ffffff;
+        --bg: #f3f4f6;
+        --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+        --radius: 24px;
       }
 
       body {
@@ -42,7 +41,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(22, 2, 2, 0.77);
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -57,30 +56,59 @@
       }
 
       .nav-links {
+        margin-left: auto;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
       }
 
       .nav-links a {
-        color: var(--text-nav);
+        background: transparent !important;
+        border: none !important;
+        color: #e2e8f0 !important;
+        padding: 8px 10px;
+        border-radius: 10px;
         text-decoration: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: 0.3s;
+        font-weight: 600;
       }
 
       .nav-links a:hover {
-        color: var(--accent);
-        background: rgba(255, 255, 255, 0.05);
+        color: var(--accent) !important;
+        background: rgba(32, 33, 5, 0.16) !important;
+        transform: none;
       }
 
       .user-badge {
-        background: var(--accent);
-        color: var(--primary) !important;
+        background: #d4af37 !important;
+        color: #0b1533 !important;
+        border: none !important;
         font-weight: 700;
+      }
+
+      .nav-user-link {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px !important;
+      }
+
+      .nav-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--primary);
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 800;
+        overflow: hidden;
+      }
+
+      .nav-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       /* --- Messages Alert --- */
@@ -167,42 +195,42 @@
       }
 
       .messages {
-    position: fixed;
-    top: 90px;
-    right: 30px;
-    z-index: 9999;
-}
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        z-index: 9999;
+      }
 
-.alert,
-.message {
-    background: #0f172a !important;
-    color: white !important;
-    padding: 16px 22px;
-    border-radius: 14px;
-    font-weight: 600;
-    box-shadow: 0 15px 35px rgba(0,0,0,.15);
-    margin-bottom: 12px;
-}
+      .alert,
+      .message {
+        background: #0f172a !important;
+        color: white !important;
+        padding: 16px 22px;
+        border-radius: 14px;
+        font-weight: 600;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        margin-bottom: 12px;
+      }
 
-.alert-info {
-    background: #1e293b !important;
-    color: #fff !important;
-}
+      .alert-info {
+        background: #1e293b !important;
+        color: #fff !important;
+      }
 
-.alert-success {
-    background: #166534 !important;
-    color: white !important;
-}
+      .alert-success {
+        background: #166534 !important;
+        color: white !important;
+      }
 
-.alert-warning {
-    background: #92400e !important;
-    color: white !important;
-}
+      .alert-warning {
+        background: #92400e !important;
+        color: white !important;
+      }
 
-.alert-danger {
-    background: #991b1b !important;
-    color: white !important;
-}
+      .alert-danger {
+        background: #991b1b !important;
+        color: white !important;
+      }
 
       .content-area {
         flex: 1;
@@ -258,72 +286,105 @@
       <a href="{% url 'event_list' %}" class="nav-logo">EventFiY</a>
 
       <div class="nav-links">
-       <div class="nav-links">
+
+  {% if user.is_authenticated %}
 
     {% if user.is_superuser %}
-        <a href="{% url 'admin_events' %}">
-            <i class="fas fa-calendar-alt"></i> Événements
-        </a>
+      <a
+        href="{% url 'admin_events' %}"
+        class="{% if request.resolver_match.url_name == 'admin_events' %}active{% endif %}"
+      >
+        <i class="fas fa-calendar-alt"></i> Events
+      </a>
     {% else %}
-        <a href="{% url 'event_list' %}">
-            <i class="fas fa-calendar-alt"></i> Événements
-        </a>
+      <a
+        href="{% url 'event_list' %}"
+        class="{% if request.resolver_match.url_name == 'event_list' %}active{% endif %}"
+      >
+        <i class="fas fa-calendar-alt"></i> Events
+      </a>
     {% endif %}
 
-    {% if user.is_authenticated %}
-
-        {% if user.profile.role == 'user' %}
-            <a href="{% url 'my_registrations' %}">
-                <i class="fas fa-ticket-alt"></i> Mes Inscriptions
-            </a>
-        {% endif %}
-
-        {% if user.profile.role == 'organizer' %}
-            <a href="{% url 'organizer_dashboard' %}" style="border: 1px solid var(--accent);">
-                Dashboard Pro
-            </a>
-        {% endif %}
-
-        {% if user.is_superuser %}
-            <a href="{% url 'admin_dashboard' %}" style="color: var(--accent);">
-                <i class="fas fa-user-shield"></i> Admin
-            </a>
-        {% endif %}
-
-        <a href="{% url 'profile' %}" class="user-badge">
-            <i class="fas fa-user-circle"></i> {{ user.username }}
-        </a>
-
-        <a href="{% url 'logout' %}" style="color: var(--danger);">
-            <i class="fas fa-sign-out-alt"></i>
-        </a>
-
-    {% else %}
-
-        <a href="{% url 'login' %}">Connexion</a>
-
-        <a href="{% url 'register' %}" style="background: var(--accent); color: var(--primary);">
-            S'inscrire
-        </a>
-
+    {% if not user.is_superuser and user.profile.role == 'user' %}
+      <a
+        href="{% url 'my_registrations' %}"
+        class="{% if request.resolver_match.url_name == 'my_registrations' %}active{% endif %}"
+      >
+        <i class="fas fa-ticket-alt"></i> My Registrations
+      </a>
     {% endif %}
+
+    {% if not user.is_superuser and user.profile.role == 'organizer' %}
+      <a
+        href="{% url 'organizer_dashboard' %}"
+        class="dashboard-btn {% if request.resolver_match.url_name == 'organizer_dashboard' %}active{% endif %}"
+      >
+        <i class="fas fa-chart-line"></i> Dashboard Pro
+      </a>
+    {% endif %}
+
+    {% if user.is_superuser %}
+      <a
+        href="{% url 'admin_dashboard' %}"
+        class="dashboard-btn {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
+      >
+        <i class="fas fa-user-shield"></i> Admin
+      </a>
+    {% endif %}
+
+    <a
+      href="{% url 'profile' %}"
+      class="user-badge nav-user-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+    >
+      <span class="nav-avatar">
+
+        {% if user.profile.avatar %}
+          <img
+            src="{{ user.profile.avatar.url }}"
+            alt="{{ user.username }} avatar"
+          />
+        {% else %}
+          {{ user.username|slice:":1"|upper }}
+        {% endif %}
+
+      </span>
+
+      <span>{{ user.username }}</span>
+    </a>
+
+    <a href="{% url 'logout' %}" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i>
+    </a>
+
+  {% else %}
+
+    <a href="{% url 'login' %}">Login</a>
+
+    <a
+      href="{% url 'register' %}"
+      style="background: var(--accent); color: var(--primary)"
+    >
+      Register
+    </a>
+
+  {% endif %}
 
 </div>
     </nav>
 
-<div class="main-wrapper">
-    <main class="content-area">
-        {% block content %}{% endblock %}
-    </main>
-</div>
+    <div class="main-wrapper">
+      <main class="content-area">{% block content %}{% endblock %}</main>
+    </div>
 
     <footer>
-      &copy; 2026 <strong>Event Manager</strong> - EMSI Casablanca (3iIR)
-      <br />Développé par Anwar Elbalghiti & Mohamed Aldarwish
+      <h2>EventFiY</h2>
+  <strong>Premium Event Platform</strong> — Smart Booking & Management
+      <br />Elevating event experiences with elegant booking,
+      seamless management, and modern design.
     </footer>
 
     <script>
-      // إخفاء رسائل التنبيه تلقائياً بعد 4 ثوانٍ
+      
       setTimeout(function () {
         const messages = document.querySelectorAll(".alert");
         messages.forEach((msg) => {

@@ -1,304 +1,278 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Profile | Hotel Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- إضافة FontAwesome للأيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #1a1a1a;
-            --accent: #d4af37;
-            --bg: #0f0f0f;
-            --card-bg: #ffffff;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
-            --danger: #d63031;
-            --success: #00b894;
-        }
+{% extends "base.html" %}
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+{% block title %}Mon Profil | EventFiY{% endblock %}
 
-        body {
-            margin: 0;
-            background: radial-gradient(circle at top right, #2c2c2c, #000);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-main);
-        }
+{% block content %}
+<style>
+    /* Container Principal */
+    .profile-wrapper {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+    }
 
-        .profile-container {
-            width: 90%;
-            max-width: 450px;
-            background: var(--card-bg);
-            border-radius: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            overflow: hidden;
-            transform: translateY(30px);
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-        }
+    /* Carte de Gauche (Avatar & Actions) */
+    .profile-card-left {
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        overflow: hidden;
+        height: fit-content;
+        border: 1px solid #e2e8f0;
+    }
 
-        .profile-container.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+    .profile-cover {
+        background: #0b1533;
+        height: 100px;
+        position: relative;
+    }
 
-        /* هيدر الملف الشخصي */
-        .profile-header {
-            background: var(--primary);
-            padding: 50px 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+    .organizer-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(212, 175, 55, 0.2);
+        color: #d4af37;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border: 1px solid #d4af37;
+    }
 
-        /* زخرفة خلفية خفيفة */
-        .profile-header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
-        }
+    .avatar-container {
+        width: 120px;
+        height: 120px;
+        margin: -60px auto 15px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+        padding: 5px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
 
-        .avatar-wrapper {
-            position: relative;
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px;
-            z-index: 2;
-        }
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #0b1533;
+    }
 
-        .avatar-circle {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--accent), #f1c40f);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--primary);
-            border: 5px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
+    .profile-info-basic {
+        text-align: center;
+        padding: 0 20px 20px;
+    }
 
-        .status-badge {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 18px;
-            height: 18px;
-            background: var(--success);
-            border: 3px solid var(--primary);
-            border-radius: 50%;
-        }
+    .profile-info-basic h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: #0b1533;
+    }
 
-        .profile-header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: var(--white);
-            color: white;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 2;
-        }
+    .profile-info-basic p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 5px 0 20px;
+    }
 
-        .user-tag {
-            display: inline-block;
-            background: rgba(212, 175, 55, 0.2);
-            color: var(--accent);
-            padding: 4px 15px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            margin-top: 8px;
-            font-weight: 500;
-            border: 1px solid var(--accent);
-            position: relative;
-            z-index: 2;
-        }
+    /* Progress Bar */
+    .completion-container {
+        padding: 0 30px 30px;
+    }
 
-        /* جسم البطاقة */
-        .profile-body {
-            padding: 30px 35px;
-        }
+    .completion-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
 
-        .info-card {
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 10px 20px;
-            margin-bottom: 25px;
-        }
+    .progress-bar-bg {
+        background: #f1f5f9;
+        height: 8px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-        .info-row {
-            display: flex;
-            align-items: center;
-            padding: 18px 0;
-            border-bottom: 1px solid #edf2f7;
-        }
+    .progress-bar-fill {
+        background: #d4af37;
+        height: 100%;
+        border-radius: 10px;
+    }
 
-        .info-row:last-child { border-bottom: none; }
+    /* Boutons d'action */
+    .profile-actions {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #f8fafc;
+    }
 
-        .info-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 15px;
-            color: var(--accent);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
+    .btn-profile {
+        padding: 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.3s;
+    }
 
-        .info-content {
-            display: flex;
-            flex-direction: column;
-        }
+    .btn-dark { background: #0b1533; color: white; }
+    .btn-dark:hover { background: #162655; transform: translateY(-2px); }
 
-        .label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .btn-outline { border: 2px solid #e2e8f0; color: #64748b; }
+    .btn-outline:hover { border-color: #0b1533; color: #0b1533; }
 
-        .value {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-main);
-        }
+    /* Carte de Droite (Détails) */
+    .profile-card-right {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
 
-        /* الأزرار */
-        .actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
-        }
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 15px;
+    }
 
-        .btn {
-            padding: 14px;
-            border-radius: 15px;
-            text-decoration: none;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
+    .section-title h3 {
+        margin: 0;
+        color: #0b1533;
+        font-size: 1.2rem;
+    }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            grid-column: span 2; /* زر العودة يأخذ المساحة كاملة */
-        }
+    .member-since {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
 
-        .btn-primary:hover {
-            background: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(212,175,55,0.2);
-        }
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
 
-        .btn-logout {
-            background: #fff0f0;
-            color: var(--danger);
-            border: 1px solid #ffebeb;
-        }
+    .info-item {
+    background: #f8fafc;
+    padding: 15px 20px; /* N9sna padding l-fou9 o l-te7t */
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80px; /* N9essna l-toul l-idna */
+}
 
-        .btn-logout:hover {
-            background: var(--danger);
-            color: white;
-        }
+.info-item label {
+    font-size: 0.65rem; /* Sgherna label chwiya */
+    margin-bottom: 4px;  /* N9sna l-faragh bin label o l-value */
+}
 
-        .btn-edit {
-            background: #f0f7ff;
-            color: #0984e3;
-            border: 1px solid #e1f0ff;
-        }
+    .info-item .value {
+        color: #0b1533;
+        font-weight: 600;
+        font-size: 1rem;
+    }
 
-        .btn-edit:hover {
-            background: #0984e3;
-            color: white;
-        }
-    </style>
-</head>
-<body>
+    .info-item i {
+        color: #38bdf8;
+        margin-right: 8px;
+    }
 
-<div class="profile-container" id="profileCard">
-    <div class="profile-header">
-        <div class="avatar-wrapper">
-            <div class="avatar-circle">
-                {{ request.user.username|slice:":1"|upper }}
-            </div>
-            <div class="status-badge"></div>
+    @media (max-width: 900px) {
+        .profile-wrapper { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="profile-wrapper">
+    <div class="profile-card-left">
+        <div class="profile-cover">
+            {% if user.profile.role == 'organizer' %}
+                <span class="organizer-badge"><i class="fas fa-crown"></i> Organizer</span>
+            {% endif %}
         </div>
-        <h1>{{ request.user.username|capfirst }}</h1>
-        <span class="user-tag">{{ profile.role|default:"Member" }}</span>
+        
+        <div class="avatar-container">
+            <div class="avatar-img">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-info-basic">
+            <h2>{{ user.first_name }} {{ user.last_name|default:user.username }}</h2>
+            <p>@{{ user.username }}</p>
+        </div>
+
+        
+
+        <div class="profile-actions">
+            <a href="{% url 'edit_profile' %}" class="btn-profile btn-dark">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="{% url 'change_password' %}" class="btn-profile btn-outline">
+                <i class="fas fa-lock"></i> Security
+            </a>
+            {% if user.profile.role == 'organizer' %}
+            <a href="{% url 'organizer_dashboard' %}" class="btn-profile btn-outline">
+                <i class="fas fa-chart-line"></i> Organizer Dashboard
+            </a>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="profile-body">
-        <div class="info-card">
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                <div class="info-content">
-                    <span class="label">Email Address</span>
-                    <span class="value">{{ request.user.email }}</span>
-                </div>
-            </div>
-            
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-phone"></i></div>
-                <div class="info-content">
-                    <span class="label">Phone Number</span>
-                    <span class="value">{{ profile.phone|default:"Not provided" }}</span>
-                </div>
-            </div>
-
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-shield-halved"></i></div>
-                <div class="info-content">
-                    <span class="label">Account Status</span>
-                    <span class="value" style="color: var(--success);">Verified Account</span>
-                </div>
-            </div>
+    <div class="profile-card-right">
+        <div class="section-title">
+            <h3>Account Information</h3>
+            <span class="member-since">Member since {{ user.date_joined|date:"d M Y" }}</span>
         </div>
 
-        <div class="actions">
-            <a href="{% url 'event_list' %}" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
-            </a>
-            <a href="{% url 'logout' %}" class="btn btn-logout">
-                <i class="fas fa-right-from-bracket"></i> Logout
-            </a>
+        <div class="info-grid">
+            <div class="info-item">
+                <label><i class="fas fa-signature"></i> Full Name</label>
+                <div class="value">{{ user.get_full_name|default:"Not provided" }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <div class="value">{{ user.email }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-phone"></i> Contact</label>
+                <div class="value">{{ user.profile.phone|default:"Not provided" }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-id-badge"></i> Account Type</label>
+                <div class="value">
+                    {% if user.profile.role == 'organizer' %}Organizer{% else %}Standard User{% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const card = document.getElementById('profileCard');
-        setTimeout(() => {
-            card.classList.add('show');
-        }, 100);
-    });
-</script>
-
-</body>
-</html>
+{% endblock %}

@@ -223,6 +223,22 @@
         color: white;
       }
 
+      .btn-waitlist {
+        background: #92400e;
+        color: white;
+      }
+
+      .btn-cancel-ticket {
+        background: var(--danger);
+        color: white;
+      }
+
+      .seat-status {
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+
       @media (max-width: 768px) {
         .info-grid {
           grid-template-columns: 1fr;
@@ -264,77 +280,113 @@ style="
               font-size: 0.85rem;
             "
           >
-            <span>Disponibilité</span>
-            <span id="seats-percent">0% Full</span>
-          </div>
-          <div class="progress-bg">
-            <div class="progress-fill" id="progress-bar"></div>
-          </div>
-        </div>
-      </div>
+          <span>Availability</span>
+<span id="seats-percent">0% Full</span>
+</div>
+<div class="progress-bg">
+    <div class="progress-fill" id="progress-bar"></div>
+</div>
+</div>
+</div>
 
-      <div class="event-content">
-        <div class="info-grid">
-          <div class="info-card">
+<div class="event-content">
+    <div class="info-grid">
+        <div class="info-card">
             <i class="fas fa-calendar-day"></i>
             <label>Date</label>
             <span>{{ event.event_date|date:"d M Y" }}</span>
-          </div>
-          <div class="info-card">
+        </div>
+
+        <div class="info-card">
             <i class="fas fa-clock"></i>
-            <label>Heure</label>
+            <label>Time</label>
             <span>{{ event.event_time }}</span>
-          </div>
-          <div class="info-card">
+        </div>
+
+        <div class="info-card">
             <i class="fas fa-map-marker-alt"></i>
-            <label>Lieu</label>
+            <label>Location</label>
             <span>{{ event.location }}</span>
-          </div>
         </div>
+    </div>
 
-        <div class="description-text">
-         {{ event.description|default:"Découvrez une expérience unique conçue par les meilleurs organisateurs."|linebreaks }}
-        </div>
+    <div class="description-text">
+        {{ event.description|default:"Discover a unique experience designed by the best organizers."|linebreaks }}
+    </div>
 
-        <div class="bottom-actions">
-          <div class="main-cta">
+    <div class="bottom-actions">
+        <div class="main-cta">
 
-    {% if user.is_authenticated %}
+            <div class="seat-status">
+                {{ event.remaining_seats }} seats remaining / {{ event.capacity }}
 
-        {% if user.profile.role == 'organizer' or user.is_superuser %}
+                {% if event.remaining_seats <= 0 %}
+                    <span style="color: var(--danger);">
+                        Sold Out
+                    </span>
+                {% endif %}
+            </div>
 
-            <span style="color: var(--accent); font-weight: 700;">
-                Mode organisateur
-            </span>
+            {% if user.is_authenticated %}
 
-        {% elif event.remaining_seats > 0 and event.status == 'published' %}
+                {% if user.profile.role == 'organizer' or user.is_superuser %}
 
-            <a href="{% url 'payment_page' event.id %}" class="btn btn-book">
-                <i class="fas fa-credit-card"></i>
-                Pay & Reserve
-            </a>
+                    <span style="color: var(--accent); font-weight: 700;">
+                        Organizer View
+                    </span>
 
-        {% elif event.status == 'published' %}
+                {% elif user_ticket %}
 
-            <a href="{% url 'register_event' event.id %}" class="btn btn-book">
-                Rejoindre la liste d’attente
-            </a>
+                    <form method="post" action="{% url 'cancel_ticket' user_ticket.id %}">
+                        {% csrf_token %}
 
-        {% else %}
+                        <button type="submit" class="btn btn-cancel-ticket">
+                            <i class="fas fa-ban"></i>
+                            Cancel Ticket
+                        </button>
+                    </form>
 
-            <span style="color: var(--danger); font-weight: 700;">
-                Complet ou non disponible
-            </span>
+                {% elif event.remaining_seats > 0 and event.status == 'published' %}
 
-        {% endif %}
+                    <a href="{% url 'tickets:payment_page' event.id %}" class="btn btn-book">
+                        <i class="fas fa-credit-card"></i>
+                        Book Now
+                    </a>
 
-    {% else %}
+                {% elif waitlist_entry %}
 
-        <a href="{% url 'login' %}" class="btn btn-book">
-            Se connecter pour réserver
-        </a>
+                    <span style="color: var(--accent); font-weight: 700;">
+                        Waitlist Status:
+                        {{ waitlist_entry.get_status_display }}
+                    </span>
 
-    {% endif %}
+                {% elif event.status == 'published' %}
+
+                    <form method="post" action="{% url 'join_waitlist' event.id %}">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-waitlist">
+                            Join Waitlist
+                        </button>
+                    </form>
+
+                {% else %}
+
+                    <span style="color: var(--danger); font-weight: 700;">
+                        Sold Out or Unavailable
+                    </span>
+
+                {% endif %}
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="btn btn-book">
+                    Login to Reserve
+                </a>
+
+            {% endif %}
+
+
 
 </div>
             <a href="{% url 'event_list' %}" class="tool-link" title="Retour"

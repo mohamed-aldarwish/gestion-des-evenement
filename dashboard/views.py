@@ -7,7 +7,6 @@ from django.http import HttpResponseForbidden
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.utils import timezone
-from urllib3 import request
 from tickets.models import Ticket
 from events.models import Event, Waitlist
 
@@ -16,7 +15,7 @@ def dashboard_home(request):
     current_year = timezone.now().year
 
     user_tickets = (
-        Ticket.objects.filter(user=request.user)
+        Ticket.objects.filter(user=request.user, status='active', payment_status='paid')
         .select_related('event')
         .order_by('-booked_at')
     )
@@ -38,17 +37,12 @@ def dashboard_home(request):
         total=Sum('quantity')
     )['total'] or 0
 
-    print("USER:", request.user.id, request.user.username)
-    print("MY TICKETS:", user_tickets.count())
-    print("TOTAL QUANTITY:", total_tickets_user)
-    print("ALL TICKETS:", Ticket.objects.count())
-
     context = {
         'total_events': Event.objects.filter(status='published').count(),
         'published_events': Event.objects.filter(status='published').count(),
         'total_tickets': total_tickets_user,
 
-        'recent_events': Event.objects.filter(status='published').order_by('-created_at')[:5],
+        'recent_events': Event.objects.filter(status='published').select_related('organizer').order_by('-created_at')[:5],
         'recent_tickets': user_tickets[:5],
 
         'chart_data': json.dumps(data_points),
@@ -62,7 +56,8 @@ def my_tickets(request):
     tickets = (
         Ticket.objects.filter(
             user=request.user,
-            status='active'
+            status='active',
+            payment_status='paid'
         )
         .select_related('event')
         .order_by('-booked_at')
@@ -80,7 +75,8 @@ def admin_dashboard(request):
         )
 
     active_tickets = Ticket.objects.filter(
-        status='active'
+        status='active',
+        payment_status='paid'
     ).select_related('event', 'user')
 
     total_tickets_admin = active_tickets.aggregate(
@@ -92,7 +88,7 @@ def admin_dashboard(request):
         'total_events': Event.objects.count(),
         'published_events': Event.objects.filter(status='published').count(),
         'total_tickets': total_tickets_admin,
-        'recent_events': Event.objects.order_by('-created_at')[:5],
+        'recent_events': Event.objects.select_related('organizer').order_by('-created_at')[:5],
         'recent_tickets': active_tickets.order_by('-booked_at')[:5],
     }
 
@@ -126,7 +122,8 @@ def organizer_dashboard(request):
     my_tickets = (
         Ticket.objects.filter(
             event__organizer=request.user,
-            status='active'
+            status='active',
+            payment_status='paid'
         )
         .select_related('event', 'user')
     )
@@ -222,7 +219,7 @@ def admin_events(request):
     search = request.GET.get('search', '')
     status = request.GET.get('status', '')
 
-    events = Event.objects.all().order_by('-created_at')
+    events = Event.objects.select_related('organizer').order_by('-created_at')
 
     if search:
         events = events.filter(title__icontains=search)
@@ -287,7 +284,7 @@ def admin_analytics(request):
     current_year = timezone.now().year
 
     tickets_by_month = (
-        Ticket.objects.filter(status='active', booked_at__year=current_year)
+        Ticket.objects.filter(status='active', payment_status='paid', booked_at__year=current_year)
         .annotate(month=ExtractMonth('booked_at'))
         .values('month')
         .annotate(total=Sum('quantity'))
@@ -307,7 +304,7 @@ def admin_analytics(request):
         'total_events': Event.objects.count(),
         'published_events': published_count,
         'draft_events': draft_count,
-        'total_tickets': Ticket.objects.filter(status='active').aggregate(total=Sum('quantity'))['total'] or 0,
+        'total_tickets': Ticket.objects.filter(status='active', payment_status='paid').aggregate(total=Sum('quantity'))['total'] or 0,
 
         'ticket_chart_data': json.dumps(ticket_data),
         'event_status_data': json.dumps([published_count, draft_count]),

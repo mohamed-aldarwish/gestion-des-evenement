@@ -51,24 +51,25 @@
         margin: 0;
       }
 
-      /* تصفيف قائمة التسجيلات */
-      .registration-card {
-        background: var(--white);
-        border-radius: 20px;
-        padding: 25px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-left: 5px solid var(--accent);
-        transition: transform 0.2s;
-      }
+      /* Registration Card */
+.registration-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid var(--accent);
+  transition: 0.25s ease;
 
-      .registration-card:hover {
-        transform: translateX(5px);
-      }
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
 
+.registration-card:hover {
+  transform: translateY(-3px);
+}
       .status-badge {
         font-size: 0.75rem;
         padding: 4px 12px;
@@ -86,16 +87,26 @@
         color: var(--danger);
       }
 
-      .info-group h2 {
-        font-size: 1.1rem;
-        margin: 5px 0;
-      }
+      .info-group {
+  min-width: 0;
+}
+
+.info-group h2 {
+  font-size: 1.15rem;
+  margin: 8px 0;
+  line-height: 1.4;
+}
       .details {
-        font-size: 0.85rem;
-        color: var(--muted);
-        display: flex;
-        gap: 15px;
-      }
+  font-size: 0.88rem;
+  color: var(--muted);
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+
+  margin-top: 10px;
+}
 
       /* نافذة التأكيد (Modal-like) */
       .cancel-overlay {
@@ -197,9 +208,9 @@
     <div class="container">
       <!-- قسم قائمة التسجيلات -->
       <div class="section-header">
-        <h1>Mes inscriptions</h1>
+        <h1>My Registrations</h1>
         <a href="{% url 'event_list' %}" class="btn-nav"
-          >← Retour aux événements</a
+          >← Back to Events</a
         >
       </div>
 
@@ -224,11 +235,11 @@
           {% if registration.status == 'active' %}
           <div class="actions" style="display: flex; gap: 10px">
             <a
-              href="{% url 'ticket_detail' registration.id %}"
+              href="{% url 'tickets:ticket_detail' registration.id %}"
               class="btn"
               style="background: #0f172a; color: white"
             >
-              Voir Ticket
+              View Ticket
             </a>
 
             <form
@@ -236,7 +247,7 @@
               action="{% url 'cancel_registration' registration.id %}"
             >
               {% csrf_token %}
-              <button type="submit" class="btn btn-cancel">Annuler</button>
+              <button type="submit" class="btn btn-cancel">Cancel Registration</button>
             </form>
           </div>
           {% endif %}
@@ -251,7 +262,7 @@
             border-radius: 20px;
           "
         >
-          <p style="color: var(--muted)">Aucune inscription trouvée.</p>
+          <p style="color: var(--muted)">You don't have any registrations yet.</p>
         </div>
         {% endfor %}
       </div>
@@ -261,7 +272,7 @@
 
       <div style="margin-top: 50px">
         <div class="section-header">
-          <h1>Liste d’attente</h1>
+          <h1>WaitList</h1>
         </div>
 
         {% for entry in waitlist_entries %}
@@ -283,14 +294,14 @@
 
               <span> 📍 {{ entry.event.location }} </span>
 
-              <span> 🎫 Quantité: {{ entry.quantity }} </span>
+              <span>Invitation: {{ entry.get_status_display }}</span>
             </div>
           </div>
 
           <div class="actions" style="display:flex; gap:10px;">
 
     {% if entry.status == 'notified' %}
-    <a href="{% url 'payment_page' entry.event.id %}"
+    <a href="{% url 'tickets:payment_page' entry.event.id %}"
        class="btn"
        style="background:#0f172a;color:white;">
         Pay Now
@@ -302,7 +313,7 @@
         {% csrf_token %}
 
         <button type="submit" class="btn btn-cancel">
-            Quitter
+            Leave
         </button>
     </form>
 
@@ -319,9 +330,9 @@
       {% if false %}
       <div class="cancel-overlay">
         <span style="font-size: 2rem">⚠️</span>
-        <h2>Confirmer l'annulation</h2>
+        <h2>Confirm Cancellation</h2>
         <p style="color: var(--muted)">
-          Êtes-vous sûr de vouloir annuler votre place pour :<br />
+          Are you sure you want to cancel your spot for :<br />
           <strong style="color: var(--primary)"
             >{{ ticket.event.title }}</strong
           >
@@ -331,12 +342,12 @@
         <form method="POST">
           {% csrf_token %}
           <button type="submit" class="btn btn-confirm">
-            Oui, confirmer l'annulation
+            Yes, confirm cancellation
           </button>
         </form>
         <br />
         <a href="{% url 'my_registrations' %}" class="btn btn-back"
-          >Non, garder ma place</a
+          >No, keep my spot</a
         >
       </div>
       {% endif %}

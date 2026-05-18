@@ -158,11 +158,11 @@ form.addEventListener('submit', async (e) => {
 
     submitBtn.disabled = true;
     submitBtn.innerText = 'Processing...';
-    messageBox.innerHTML = '';
+    messageBox.textContent = '';
 
     try {
         const response = await fetch(
-            '/tickets/payment-intent/{{ event.id }}/',
+            '{% url "tickets:create_payment_intent" event.id %}',
             {
                 method: 'POST',
                 headers: {
@@ -174,7 +174,7 @@ form.addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (!response.ok || data.error) {
-            messageBox.innerHTML = data.error || 'Payment initialization failed.';
+            messageBox.textContent = data.error || 'Payment initialization failed.';
             submitBtn.disabled = false;
             submitBtn.innerText = 'Pay Now';
             return;
@@ -190,19 +190,19 @@ form.addEventListener('submit', async (e) => {
         );
 
         if (result.error) {
-            messageBox.innerHTML = result.error.message;
+            messageBox.textContent = result.error.message;
             submitBtn.disabled = false;
             submitBtn.innerText = 'Pay Now';
         } else {
             if (result.paymentIntent.status === 'succeeded') {
-                window.location.href = '/tickets/payment-success/{{ event.id }}/';
+                window.location.href = '{% url "tickets:payment_success" event.id %}?payment_intent=' + result.paymentIntent.id;
             } else {
-                window.location.href = '/tickets/payment-cancel/';
+                window.location.href = '{% url "tickets:payment_cancel" %}';
             }
         }
 
     } catch (error) {
-        messageBox.innerHTML = 'An error occurred. Please try again.';
+        messageBox.textContent = 'An error occurred. Please try again.';
         submitBtn.disabled = false;
         submitBtn.innerText = 'Pay Now';
     }

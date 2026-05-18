@@ -186,9 +186,9 @@
 
       <div class="alert-box">
         <p>
-          Vous êtes sur le point de supprimer l'événement
-          <span class="event-title-display">"{{ event.title }}"</span>. Toutes
-          les données associées seront perdues.
+          You are about to delete the event
+          <span class="event-title-display">"{{ event.title }}"</span>. All
+          associated data will be lost.
         </p>
       </div>
 
@@ -201,16 +201,16 @@
             id="confirmDeleteBtn"
             style="width: 100%"
           >
-            <i class="fas fa-trash-alt"></i> Confirmer la suppression
+            <i class="fas fa-trash-alt"></i> Confirm Deletion
           </button>
         </form>
 
         <a href="{% url 'event_detail' event.id %}" class="btn btn-cancel">
-          <i class="fas fa-times"></i> Annuler
+          <i class="fas fa-times"></i> Cancel
         </a>
       </div>
 
-      <span class="irreversible-tag">Action irréversible</span>
+      <span class="irreversible-tag">Action irreversible</span>
     </div>
 
     <script>

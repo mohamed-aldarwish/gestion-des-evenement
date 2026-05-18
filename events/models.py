@@ -8,7 +8,7 @@ class Event(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
         ('published', 'Published'),
-        # ('cancelled', 'Cancelled'),
+        ('cancelled', 'Cancelled'),
     ]
 
     title = models.CharField(max_length=200)
@@ -36,16 +36,22 @@ class Event(models.Model):
         related_name='organized_events'
     )
     price = models.DecimalField(
-    max_digits=10,
-    decimal_places=2,
-    default=0
-)
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def booked_seats(self):
-        return self.tickets.filter(status='active').aggregate(
+        if hasattr(self, 'booked_seats_count'):
+            return self.booked_seats_count or 0
+
+        return self.tickets.filter(
+            status='active',
+            payment_status='paid'
+        ).aggregate(
             total=Sum('quantity')
         ).get('total') or 0
 
@@ -62,6 +68,7 @@ class Waitlist(models.Model):
     STATUS_CHOICES = [
         ('waiting', 'Waiting'),
         ('notified', 'Notified'),
+        ('converted', 'Converted'),
         ('cancelled', 'Cancelled'),
     ]
 
@@ -77,8 +84,6 @@ class Waitlist(models.Model):
         related_name='waitlist_entries'
     )
 
-    quantity = models.PositiveIntegerField(default=1)
-
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -86,6 +91,7 @@ class Waitlist(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    notified_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['created_at']

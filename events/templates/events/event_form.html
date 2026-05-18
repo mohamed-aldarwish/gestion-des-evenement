@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% if event %}Modifier{% else %}Créer{% endif %} événement</title>
+    <title>{% if event %}Modifier{% else %}Créer{% endif %} Event</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -234,13 +234,13 @@ input[type="file"]::file-selector-button:hover {
       <div class="form-header">
      <h1>
     {% if event %}
-        Modifier l'événement
+        Edit Event
     {% else %}
-        Nouvel Événement
+        New Event
     {% endif %}
 </h1>
         <p>
-          Remplissez les informations ci-dessous pour publier votre événement.
+          Fill in the information below to publish your event.
         </p>
       </div>
 
@@ -248,26 +248,26 @@ input[type="file"]::file-selector-button:hover {
         {% csrf_token %}
 
         <div class="form-grid">
-          <!-- Titre -->
+          <!-- Title -->
           <div class="form-group full-width">
-            <label><i class="fas fa-heading"></i> Titre de l'événement</label>
+            <label><i class="fas fa-heading"></i> Event Title</label>
             <input
               type="text"
               name="title"
               value="{{ event.title|default:'' }}"
-              placeholder="Ex: Conférence sur l'IA à ......"
+              placeholder="Ex: AI Conference in ......"
               required
             />
           </div>
 
           <!-- Description -->
           <div class="form-group full-width">
-            <label
-              ><i class="fas fa-align-left"></i> Description détaillée</label
-            >
+            <label>
+              <i class="fas fa-align-left"></i> Detailed Description
+            </label>
             <textarea
               name="description"
-              placeholder="Décrivez votre événement..."
+              placeholder="Describe your event..."
             >
 {{ event.description|default:'' }}</textarea
             >
@@ -283,14 +283,14 @@ input[type="file"]::file-selector-button:hover {
               value="{{ event.event_date|date:'Y-m-d' }}"
               required
             />
-            <span class="date-warning" id="date-alert"
-              >La date ne peut pas être dans le passé !</span
-            >
+            <span class="date-warning" id="date-alert">
+              The date cannot be in the past!
+            </span>
           </div>
 
-          <!-- Heure -->
+          <!-- Time -->
           <div class="form-group">
-            <label><i class="fas fa-clock"></i> Heure</label>
+            <label><i class="fas fa-clock"></i> Time</label>
             <input
               type="time"
               name="event_time"
@@ -299,21 +299,21 @@ input[type="file"]::file-selector-button:hover {
             />
           </div>
 
-          <!-- Lieu -->
+          <!-- Location -->
           <div class="form-group">
-            <label><i class="fas fa-map-marker-alt"></i> Lieu</label>
+            <label><i class="fas fa-map-marker-alt"></i> Location</label>
             <input
               type="text"
               name="location"
               value="{{ event.location|default:'' }}"
-              placeholder="Ex: 123 Rue de ......"
+              placeholder="Ex: 123 Main Street ......"
               required
             />
           </div>
 
-          <!-- Capacité -->
+          <!-- Capacity -->
           <div class="form-group">
-            <label><i class="fas fa-users"></i> Capacité</label>
+            <label><i class="fas fa-users"></i> Capacity</label>
             <input
               type="number"
               name="capacity"
@@ -324,9 +324,9 @@ input[type="file"]::file-selector-button:hover {
             />
           </div>
 
-        <!-- Prix -->
+        <!-- Price -->
 <div class="form-group">
-    <label><i class="fas fa-dollar-sign"></i> Prix</label>
+    <label><i class="fas fa-dollar-sign"></i> Price</label>
     <input
         type="number"
         step="0.01"
@@ -340,7 +340,7 @@ placeholder="Ex: 49.99"
 
 <!-- Image -->
 <div class="form-group">
-    <label><i class="fas fa-image"></i> Image de l'événement</label>
+    <label><i class="fas fa-image"></i> Event Image</label>
     <input type="file" name="image" accept="image/*">
 
     {% if event.image %}
@@ -358,39 +358,40 @@ placeholder="Ex: 49.99"
     {% endif %}
 </div>
 
-<!-- Catégorie -->
+<!-- Category -->
 <div class="form-group">
-    <label><i class="fas fa-tag"></i> Catégorie</label>
+    <label><i class="fas fa-tag"></i> Category</label>
     <select name="category">
-        <option value="Music" {% if event.category == "Music" %}selected{% endif %}>Musique & Concert</option>
+        <option value="Music" {% if event.category == "Music" %}selected{% endif %}>Music & Concert</option>
         <option value="Gaming" {% if event.category == "Gaming" %}selected{% endif %}>Gaming & Esports</option>
-        <option value="Tech" {% if event.category == "Tech" %}selected{% endif %}>Technologie</option>
+        <option value="Tech" {% if event.category == "Tech" %}selected{% endif %}>Technology</option>
         <option value="Art" {% if event.category == "Art" %}selected{% endif %}>Art & Culture</option>
-        <option value="Sport" {% if event.category == "Sport" %}selected{% endif %}>Sport</option>
-        <option value="Education" {% if event.category == "Education" %}selected{% endif %}>Éducation</option>
+        <option value="Sport" {% if event.category == "Sport" %}selected{% endif %}>Sports</option>
+        <option value="Education" {% if event.category == "Education" %}selected{% endif %}>Education</option>
     </select>
 </div>
 
-<!-- Statut -->
+<!-- Status -->
 <div class="form-group">
-    <label><i class="fas fa-info-circle"></i> Statut</label>
+    <label><i class="fas fa-info-circle"></i> Status</label>
     <select name="status" required>
-        <option value="draft" {% if event.status == "draft" or not event %}selected{% endif %}>Brouillon</option>
-        <option value="published" {% if event.status == "published" %}selected{% endif %}>Publier directement</option>
+        <option value="draft" {% if event.status == "draft" or not event %}selected{% endif %}>Draft</option>
+        <option value="published" {% if event.status == "published" %}selected{% endif %}>Publish Directly</option>
     </select>
 </div>
+
         <div class="actions">
-          <a href="{% url 'event_list' %}" class="btn-back">Annuler</a>
+          <a href="{% url 'event_list' %}" class="btn-back">Cancel</a>
+
           <button type="submit">
             <i class="fas fa-save"></i>
-            {% if event %}Mettre à jour{% else %}Créer l'événement{% endif %}
+            {% if event %}Update Event{% else %}Create Event{% endif %}
           </button>
         </div>
       </form>
     </div>
 
     <script>
-      // تحسين تجربة المستخدم: منع اختيار تاريخ قديم
       const dateInput = document.getElementById("event_date");
       const alertMsg = document.getElementById("date-alert");
 
