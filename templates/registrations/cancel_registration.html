@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancel Registration | {{ ticket.event.title }}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/registrations/cancel-registration.css' %}">
+  </head>
+  <body>
+    <div class="cancel-card">
+      <div class="icon-container">
+        <span>🗑️</span>
+      </div>
+
+      <h2>Cancel Registration</h2>
+
+      <p class="warning-text">
+        Are you sure you want to cancel this ticket? This action will release
+        your seat back to the event pool.
+      </p>
+
+      <div class="event-details">
+        <span class="event-label">Event Title</span>
+        <span class="event-title">{{ ticket.event.title }}</span>
+      </div>
+
+      <div class="actions">
+        <form method="POST" action="">
+          {% csrf_token %}
+          <button type="submit">Confirm Cancellation</button>
+        </form>
+
+        <a href="{% url 'my_registrations' %}" class="btn-back"
+          >Nevermind, go back</a
+        >
+      </div>
+    </div>
+
+    <script src="{% static 'js/registrations/cancel-registration.js' %}"></script>
+  </body>
+</html>

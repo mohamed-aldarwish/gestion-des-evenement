@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Tickets | Grand Luxe{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/my-tickets.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="tickets-container">
+    <h1 class="page-title">🎟️ My Digital Tickets</h1>
+
+    {% for ticket in tickets %}
+        <div class="ticket-card">
+            <div class="ticket-main">
+                <div class="ticket-event-name">{{ ticket.event.title }}</div>
+                
+                <div class="ticket-info-grid">
+                    <div class="info-item">
+                        <label>Date & Time</label>
+                        <span>{{ ticket.event.event_date }} @ {{ ticket.event.event_time }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Location</label>
+                        <span>{{ ticket.event.location }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Quantity</label>
+                        <span>{{ ticket.quantity }} Person(s)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Order Reference</label>
+                        <span>#GL-{{ ticket.id }}{{ ticket.booked_at|date:"is" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-stub">
+                <div class="qr-placeholder">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <p class="dashboard-my-tickets-inline-1">SCAN AT ENTRANCE</p>
+                <a href="{% url 'event_detail' ticket.event.id %}" class="btn-detail">VIEW EVENT</a>
+                <form method="post" action="{% url 'cancel_ticket' ticket.id %}" class="dashboard-my-tickets-inline-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-detail btn-cancel">CANCEL</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <div class="empty-tickets">
+            <i class="fas fa-ticket-alt"></i>
+            <h3>No Tickets Found</h3>
+            <p class="dashboard-my-tickets-inline-3">It seems you haven't booked any luxury experiences yet.</p>
+            <a href="{% url 'event_list' %}" class="btn-detail dashboard-my-tickets-inline-4">Browse Events</a>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- إضافة FontAwesome إذا لم يكن موجوداً في base.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

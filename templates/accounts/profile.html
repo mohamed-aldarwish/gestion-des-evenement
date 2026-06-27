@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon Profil | EventFiY{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/accounts/profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="profile-wrapper">
+    <div class="profile-card-left">
+        <div class="profile-cover">
+            {% if user.profile.role == 'organizer' %}
+                <span class="organizer-badge"><i class="fas fa-crown"></i> Organizer</span>
+            {% endif %}
+        </div>
+        
+        <div class="avatar-container">
+            <div class="avatar-img">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="accounts-profile-inline-1">
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-info-basic">
+            <h2>{{ user.first_name }} {{ user.last_name|default:user.username }}</h2>
+            <p>@{{ user.username }}</p>
+        </div>
+
+        
+
+        <div class="profile-actions">
+            <a href="{% url 'edit_profile' %}" class="btn-profile btn-dark">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="{% url 'change_password' %}" class="btn-profile btn-outline">
+                <i class="fas fa-lock"></i> Security
+            </a>
+            {% if user.profile.role == 'organizer' %}
+            <a href="{% url 'organizer_dashboard' %}" class="btn-profile btn-outline">
+                <i class="fas fa-chart-line"></i> Organizer Dashboard
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="profile-card-right">
+        <div class="section-title">
+            <h3>Account Information</h3>
+            <span class="member-since">Member since {{ user.date_joined|date:"d M Y" }}</span>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label><i class="fas fa-signature"></i> Full Name</label>
+                <div class="value">{{ user.get_full_name|default:"Not provided" }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <div class="value">{{ user.email }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-phone"></i> Contact</label>
+                <div class="value">{{ user.profile.phone|default:"Not provided" }}</div>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-id-badge"></i> Account Type</label>
+                <div class="value">
+                    {% if user.profile.role == 'organizer' %}Organizer{% else %}Standard User{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

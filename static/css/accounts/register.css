@@ -1,0 +1,233 @@
+:root {
+        --primary: #1a1a1a;
+        --accent: #d4af37;
+        --accent-glow: rgba(212, 175, 55, 0.2);
+        --bg: #0f0f0f;
+        --white: #ffffff;
+        --text-muted: #888;
+        --input-bg: #fcfcfc;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: radial-gradient(circle at center, #2c2c2c 0%, #000 100%);
+        color: #333;
+      }
+
+      /* خلفية جمالية خفيفة */
+      body::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      .register-card {
+        background: var(--white);
+        padding: 45px;
+        border-radius: 25px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 550px; /* جعلناها أعرض قليلاً لتناسب التقسيم */
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        z-index: 10;
+      }
+
+      .register-card.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .header-section {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .header-section i {
+        font-size: 2.5rem;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.6rem;
+      }
+
+      p.subtitle {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+
+      /* نظام الشبكة للحقول */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      /* جعل بعض الحقول تأخذ العرض الكامل */
+      .full-width {
+        grid-column: span 2;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+
+      .input-wrapper i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #ccc;
+        transition: 0.3s;
+        font-size: 0.9rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 13px 15px 13px 45px;
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        background: var(--input-bg);
+      }
+
+      input:focus {
+        border-color: var(--accent);
+        background: var(--white);
+        box-shadow: 0 5px 15px var(--accent-glow);
+      }
+
+      input:focus + i {
+        color: var(--accent);
+      }
+
+      button {
+        grid-column: span 2;
+        padding: 16px;
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      button:hover {
+        background: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(212, 175, 55, 0.3);
+      }
+
+      .footer-link {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .footer-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .footer-link a:hover {
+        color: var(--accent);
+      }
+
+      /* استجابة الهواتف */
+      @media (max-width: 500px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .full-width {
+          grid-column: span 1;
+        }
+        button {
+          grid-column: span 1;
+        }
+      }
+
+      /* Loader Animation */
+      .loader {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #fff;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        display: none;
+        animation: rotation 1s linear infinite;
+      }
+
+      @keyframes rotation {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+.message-banner {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.8rem;
+}
+
+.message-banner.message-error {
+  background: #fff5f5;
+  border-left: 4px solid #c53030;
+}
+
+.message-banner.message-success {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+}

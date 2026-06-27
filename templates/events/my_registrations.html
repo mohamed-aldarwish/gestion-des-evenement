@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mes Inscriptions | Event-Manager{% endblock %}
+
+{% block content %}
+
+
+<div class="dashboard-container">
+  <div class="header-area">
+    <div>
+      <p class="events-my-registrations-inline-1">
+        Dashboard &gt; My Registrations
+      </p>
+      <h1>My Registrations</h1>
+    </div>
+    <a
+      href="{% url 'event_list' %}" class="events-my-registrations-inline-2">
+      <i class="fas fa-arrow-left"></i> Explorer plus
+    </a>
+  </div>
+
+  <div class="ticket-list">
+    {% for ticket in tickets %}
+    <div class="ticket-card">
+      <div class="ticket-side">
+        <i class="fas fa-ticket-alt"></i>
+        <div class="events-my-registrations-inline-3">
+          x{{ ticket.quantity }}
+        </div>
+        <div class="events-my-registrations-inline-4">
+          Places
+        </div>
+      </div>
+
+      <div class="ticket-main">
+        <div class="ticket-content">
+          <div class="event-title">{{ ticket.event.title }}</div>
+
+          <div class="detail-row">
+            <div class="info-item">
+              <i class="fas fa-calendar-day"></i>
+              {{ ticket.event.event_date|date:"d M Y" }}
+            </div>
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ ticket.event.location }}
+            </div>
+            <div class="info-item">
+              <i class="fas fa-clock"></i>
+              {{ ticket.event.event_time|time:"H:i" }}
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-actions">
+          <form
+            method="POST"
+            action="{% url 'cancel_registration' ticket.id %}"
+          >
+            {% csrf_token %}
+
+            <button type="submit" class="btn-cancel">Cancel Registration</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i
+        class="fas fa-calendar-plus events-my-registrations-inline-5"
+
+      ></i>
+      <h2 class="events-my-registrations-inline-6">
+        You don't have any registrations yet
+      </h2>
+      <p class="events-my-registrations-inline-7">
+        Browse our Events and reserve your spot in just a few clicks.
+      </p>
+      <a
+        href="{% url 'event_list' %}"
+        class="btn-cancel events-my-registrations-inline-8"
+
+      >
+        View Events
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/events/my-registrations.css' %}">
+{% endblock %}

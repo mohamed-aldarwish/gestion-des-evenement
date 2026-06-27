@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Message | Hotel-Res</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+        <link rel="stylesheet" href="{% static 'css/events/error.css' %}">
+</head>
+<body>
+
+<div class="error-container">
+    <div class="icon-box">
+        <span>⚠️</span>
+    </div>
+    
+    <h2>Something went wrong</h2>
+    
+    <!-- Dynamic message from Django -->
+    <p>{{ message|default:"We encountered an unexpected issue. Please try again or return to the main page." }}</p>
+
+    <a href="{% url 'event_list' %}" class="btn-home">Back to Events</a>
+</div>
+
+</body>
+</html>

@@ -5,8 +5,6 @@ from django.db import transaction
 
 from events.email_utils import send_ticket_confirmed_email
 from events.models import Event, Waitlist
-from events.services import notify_next_waitlisted_user
-
 from .models import Ticket
 
 
@@ -30,8 +28,7 @@ class NoSeatsAvailableError(PaymentConfirmationError):
     pass
 
 
-class WaitlistPriorityError(PaymentConfirmationError):
-    pass
+
 
 
 def normalize_payment_metadata(payment_intent):
@@ -50,12 +47,6 @@ def payment_amount_decimal(payment_intent):
     return Decimal(amount) / Decimal('100')
 
 
-def first_notified_waitlist(event):
-    return (
-        Waitlist.objects.filter(event=event, status='notified')
-        .order_by('created_at')
-        .first()
-    )
 
 
 def user_can_start_payment(user, event):
@@ -70,9 +61,7 @@ def user_can_start_payment(user, event):
     if event.remaining_seats <= 0:
         return False, 'No seats available for payment right now.'
 
-    notified_entry = first_notified_waitlist(event)
-    if notified_entry and notified_entry.user_id != user.id:
-        return False, 'A waitlisted user has priority for the available seat.'
+
 
     return True, ''
 
@@ -129,17 +118,7 @@ def confirm_paid_ticket(payment_intent, request_user=None):
             .first()
         )
 
-        priority_entry = (
-            Waitlist.objects.select_for_update()
-            .filter(event=event, status='notified')
-            .order_by('created_at')
-            .first()
-        )
 
-        if priority_entry and priority_entry.user_id != user.id:
-            raise WaitlistPriorityError(
-                'A waitlisted user has priority for the available seat.'
-            )
 
         if event.remaining_seats <= 0:
             raise NoSeatsAvailableError('No seats are available.')

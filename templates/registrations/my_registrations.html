@@ -1,0 +1,156 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mes Inscriptions | Management</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/registrations/my-registrations.css' %}">
+  </head>
+  <body>
+    <div class="container">
+      <!-- قسم قائمة التسجيلات -->
+      <div class="section-header">
+        <h1>My Registrations</h1>
+        <a href="{% url 'event_list' %}" class="btn-nav"
+          >← Back to Events</a
+        >
+      </div>
+
+      <div class="registration-list">
+        {% for registration in registrations %}
+        <div class="registration-card">
+          <div class="info-group">
+            <span
+              class="status-badge {% if registration.status == 'cancelled' %}status-cancelled{% else %}status-active{% endif %}"
+            >
+              {{ registration.status }}
+            </span>
+            <h2>{{ registration.event.title }}</h2>
+            <div class="details">
+              <span>📅 {{ registration.event.event_date|date:"d M Y" }}</span>
+              <span>🕐 {{ registration.event.event_time|time:"H:i" }}</span>
+              <span>📍 {{ registration.event.location }}</span>
+              <span>🎫 Quantité: {{ registration.quantity }}</span>
+            </div>
+          </div>
+
+          {% if registration.status == 'active' %}
+          <div class="actions registrations-my-registrations-inline-1">
+            <a
+              href="{% url 'tickets:ticket_detail' registration.id %}"
+              class="btn registrations-my-registrations-inline-2"
+
+            >
+              View Ticket
+            </a>
+
+            <form
+              method="POST"
+              action="{% url 'cancel_registration' registration.id %}"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn-cancel">Cancel Registration</button>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+        {% empty %}
+
+        <div class="registrations-my-registrations-inline-3">
+          <p class="registrations-my-registrations-inline-4">You don't have any registrations yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- WAITLIST SECTION -->
+
+      {% if waitlist_entries %}
+
+      <div class="registrations-my-registrations-inline-5">
+        <div class="section-header">
+          <h1>WaitList</h1>
+        </div>
+
+        {% for entry in waitlist_entries %}
+
+        <div class="registration-card registrations-my-registrations-inline-6">
+          <div class="info-group">
+            <span
+  class="status-badge {% if entry.status == 'notified' %}status-success{% else %}status-warning{% endif %}"
+>
+  {{ entry.status }}
+</span>
+
+            <h2>{{ entry.event.title }}</h2>
+
+            <div class="details">
+              <span> 📅 {{ entry.event.event_date|date:"d M Y" }} </span>
+
+              <span> 🕐 {{ entry.event.event_time|time:"H:i" }} </span>
+
+              <span> 📍 {{ entry.event.location }} </span>
+
+              <span>Invitation: {{ entry.get_status_display }}</span>
+            </div>
+          </div>
+
+          <div class="actions registrations-my-registrations-inline-7">
+
+    {% if entry.status == 'notified' %}
+    <a href="{% url 'tickets:payment_page' entry.event.id %}"
+       class="btn registrations-my-registrations-inline-8"
+      >
+        Pay Now
+    </a>
+    {% endif %}
+
+    <form method="POST"
+          action="{% url 'cancel_waitlist' entry.id %}">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-cancel">
+            Leave
+        </button>
+    </form>
+
+</div>
+
+        {% endfor %}
+      </div>
+
+      {% endif %}
+
+      <hr class="registrations-my-registrations-inline-9"/>
+
+      <!-- قسم تأكيد الإلغاء (non utilisé ici) -->
+      {% if false %}
+      <div class="cancel-overlay">
+        <span class="registrations-my-registrations-inline-10">⚠️</span>
+        <h2>Confirm Cancellation</h2>
+        <p class="registrations-my-registrations-inline-11">
+          Are you sure you want to cancel your spot for :<br />
+          <strong class="registrations-my-registrations-inline-12">{{ ticket.event.title }}</strong
+          >
+          ?
+        </p>
+
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-confirm">
+            Yes, confirm cancellation
+          </button>
+        </form>
+        <br />
+        <a href="{% url 'my_registrations' %}" class="btn btn-back"
+          >No, keep my spot</a
+        >
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

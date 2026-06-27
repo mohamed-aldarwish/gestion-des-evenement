@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Event | Event Manager
+{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/events/event-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+
+
+
+<div class="events-header">
+  <h1>
+    <i class="fas fa-calendar-alt events-event-list-inline-1"></i> Events
+  </h1>
+
+  {% if user.is_authenticated and user.profile.role == 'organizer' %}
+  <a href="{% url 'event_create' %}" class="btn-create">
+    <i class="fas fa-plus"></i> Create Event
+  </a>
+  {% endif %}
+</div>
+
+<!-- شريط البحث المطور -->
+<form method="GET" class="search-filters">
+  <div class="filter-input-group">
+    <i class="fas fa-search"></i>
+    <input
+      type="text"
+      name="search"
+      placeholder="Search by title..."
+      value="{{ search|default:'' }}"
+    />
+  </div>
+
+  <div class="filter-input-group">
+    <i class="fas fa-tag"></i>
+    <input
+      type="text"
+      name="category"
+      placeholder="Category..."
+      value="{{ category|default:'' }}"
+    />
+  </div>
+
+  {% if user.is_authenticated %}
+    {% if user.is_superuser or user.profile.role == 'organizer' %}
+
+        <div class="filter-input-group">
+            <i class="fas fa-filter"></i>
+
+            <select name="status">
+                <option value="">All statuses</option>
+
+                <option value="published"
+                    {% if status == 'published' %}selected{% endif %}>
+                    Published
+                </option>
+
+                <option value="draft"
+                    {% if status == 'draft' %}selected{% endif %}>
+                    Draft
+                </option>
+            </select>
+        </div>
+
+    {% endif %}
+{% endif %}
+
+<button type="submit" class="btn-filter">
+    Filter
+</button>
+</form>
+
+{% if events %}
+
+<div class="events-grid">
+  {% for event in events %}
+
+  <div class="event-card">
+    <div class="card-banner">
+      {% if event.image %}
+      <img
+        src="{{ event.image.url }}"
+        alt="{{ event.title }}"
+        class="card-banner-image"
+      />
+      {% endif %}
+      <span class="badge-category">
+        {{ event.category|default:"Général" }}
+      </span>
+
+      {% if user.is_authenticated %} {% if user.is_superuser %}
+      <span class="status-pill status-{{ event.status }}">
+        {{ event.get_status_display }}
+      </span>
+      {% elif user.profile.role == 'organizer' %}
+      <span class="status-pill status-{{ event.status }}">
+        {{ event.get_status_display }}
+      </span>
+      {% endif %} {% endif %}
+    </div>
+
+    <div class="card-body">
+      <h3 class="event-title">{{ event.title }}</h3>
+
+      <p class="events-event-list-inline-2">
+        {{ event.description|truncatewords:15 }}
+      </p>
+
+      <ul class="info-list">
+        <li>
+          <i class="fas fa-calendar"></i>
+          {{ event.event_date|date:"d M Y" }}
+        </li>
+
+        <li>
+          <i class="fas fa-map-marker-alt"></i>
+          {{ event.location }}
+        </li>
+
+        <li>
+          <i class="fas fa-ticket-alt"></i>
+
+          <span class="seat-count"> {{ event.remaining_seats }} </span>
+
+          Remaining seats / {{ event.capacity }}
+          {% if event.remaining_seats <= 0 %}
+            <span class="badge-full">Complet</span>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+
+<div class="card-footer">
+  <a href="{% url 'event_detail' event.id %}" class="btn-action btn-details">
+    View Details
+  </a>
+
+  {% if event.status == 'published' %}
+
+    {% if not user.is_authenticated %}
+      <a href="{% url 'login' %}" class="btn-action btn-book-now">
+        Connection
+      </a>
+
+    {% elif user.profile.role != 'organizer' and not user.is_superuser %}
+
+      {% if event.id in user_ticket_event_ids %}
+<a href="{% url 'my_registrations' %}" class="btn-disabled">          <i class="fas fa-check-circle"></i>
+          Already Booked
+        </a>
+
+      {% elif event.id in waitlisted_event_ids %}
+        <button class="btn-disabled" disabled>
+          <i class="fas fa-clock"></i>
+          Already in Waitlist
+        </button>
+
+      {% elif event.remaining_seats > 0 %}
+        <a href="{% url 'tickets:payment_page' event.id %}" class="btn-reserve">
+          <i class="fas fa-credit-card"></i>
+          Book Now
+        </a>
+
+      {% else %}
+        <form method="post" action="{% url 'join_waitlist' event.id %}" class="waitlist-form">
+          {% csrf_token %}
+          <button type="submit" class="btn-reserve">
+            <i class="fas fa-clock"></i>
+            Waitlist
+          </button>
+        </form>
+      {% endif %}
+
+    {% endif %}
+
+  {% endif %}
+</div>
+  </div>
+
+  {% endfor %}
+</div>
+
+{% else %}
+
+<div class="events-event-list-inline-3">
+  <i
+    class="fas fa-calendar-times events-event-list-inline-4"
+
+  >
+  </i>
+
+  <h2 class="events-event-list-inline-5">Aucun événement pour le moment</h2>
+
+  <p>Revenez plus tard ou changez vos filtres.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

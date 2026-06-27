@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="{% static 'css/tickets/payment-cancel.css' %}">
+</head>
+<body>
+
+<div class="cancel-card">
+
+    <div class="icon">
+        ✕
+    </div>
+
+    <h1>Payment Cancelled</h1>
+
+    <p>
+        The payment process was cancelled.
+        No reservation has been confirmed.
+    </p>
+
+    <a href="{% url 'event_list' %}" class="btn">
+        Return to Events
+    </a>
+
+</div>
+
+</body>
+</html>

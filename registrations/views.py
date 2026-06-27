@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.core.mail import send_mail
+from django.conf import settings
 from accounts.permissions import can_reserve_events
 from events.email_utils import send_ticket_confirmed_email
 from events.models import Event, Waitlist
@@ -88,21 +89,35 @@ def cancel_registration(request, id):
         return HttpResponseForbidden("Method not allowed")
 
     ticket = get_object_or_404(
-        Ticket.objects.select_related('event'),
+        Ticket,
         id=id,
-        user=request.user,
-        status='active',
-        payment_status='paid'
+        user=request.user
     )
 
-    _, notified_entry = cancel_paid_ticket(ticket)
+    if ticket.status != 'active' or ticket.payment_status != 'paid':
+        messages.error(request, "This ticket cannot be cancelled.")
+        return redirect('my_registrations')
 
-    if notified_entry:
+    event = ticket.event
+    ticket.status = 'cancelled'
+    ticket.save(update_fields=['status'])
+
+    next_waitlist = (
+        Waitlist.objects.filter(event=event, status='waiting')
+        .select_related('user', 'event')
+        .order_by('created_at')
+        .first()
+    )
+
+    if next_waitlist:
+        send_waitlist_available_email(next_waitlist.user, event)
+        next_waitlist.status = 'notified'
+        next_waitlist.notified_at = timezone.now()
+        next_waitlist.save(update_fields=['status', 'notified_at'])
         messages.info(request, "A seat is available. The first waitlisted user has been notified.")
 
     messages.success(request, "Reservation cancelled successfully.")
     return redirect('my_registrations')
-
 
 @login_required
 def cancel_waitlist(request, id):

@@ -1,0 +1,113 @@
+{% extends "dashboard/admin_base.html" %}
+{% load static %}
+
+{% block title %}
+Manage Users
+{% endblock %}
+
+{% block page_title %}
+Manage Users
+{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/admin-users.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="top-bar">
+
+    <form method="GET" class="search-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search user..."
+            class="search-input"
+        >
+
+        <select name="role" class="filter-select">
+            <option value="">All Roles</option>
+
+            <option value="admin" {% if role == 'admin' %}selected{% endif %}>
+                Admin
+            </option>
+
+            <option value="organizer" {% if role == 'organizer' %}selected{% endif %}>
+                Organizer
+            </option>
+
+            <option value="participant" {% if role == 'participant' %}selected{% endif %}>
+                Participant
+            </option>
+        </select>
+
+        <button type="submit" class="search-btn">
+            Search
+        </button>
+
+    </form>
+
+</div>
+
+<div class="results-text">
+    Total Users: <strong>{{ users.count }}</strong>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Staff</th>
+            <th>Joined</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for user_obj in users %}
+        <tr>
+            <td>
+                <strong>{{ user_obj.username }}</strong>
+            </td>
+
+            <td>
+                {{ user_obj.email|default:"No email" }}
+            </td>
+
+            <td>
+                {% if user_obj.is_superuser %}
+                    <span class="status published">Admin</span>
+                {% elif user_obj.profile.role == 'organizer' %}
+                    <span class="status draft">Organizer</span>
+                {% else %}
+                    <span class="status role-participant">Participant</span>
+                {% endif %}
+            </td>
+
+            <td>
+                {% if user_obj.is_staff %}
+                    Yes
+                {% else %}
+                    No
+                {% endif %}
+            </td>
+
+            <td>
+                {{ user_obj.date_joined|date:"M d, Y" }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No users found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

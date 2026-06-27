@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile | EventFiY{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/accounts/edit-profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="edit-page-wrapper">
+  <div class="edit-container">
+    <div class="eventfiy-card">
+      
+      <header class="edit-header">
+        <div>
+          <h1>Settings</h1>
+          <p>Update your personal information</p>
+        </div>
+        <a href="{% url 'profile' %}" class="back-to-profile">
+          <i class="fas fa-arrow-left"></i> Back to profile
+        </a>
+      </header>
+
+      <form method="post" enctype="multipart/form-data" class="form-content" novalidate>
+        {% csrf_token %}
+
+        <div class="form-grid-layout">
+          
+          <!-- Left: Avatar Section -->
+          <div class="avatar-upload-column">
+            <div class="avatar-preview-box" id="avatarPreview">
+              {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ request.user.username }}">
+              {% else %}
+                <span class="avatar-initial">{{ request.user.username|slice:":1"|upper }}</span>
+              {% endif %}
+            </div>
+            
+            <div class="field-group">
+    <label>Profile Picture</label>
+    <div class="custom-file-upload">
+        <label for="{{ profile_form.avatar.id_for_label }}" class="file-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span id="file-name-display">Choisir une image...</span>
+            {{ profile_form.avatar }}
+        </label>
+    </div>
+    {% if profile.avatar %}
+        <div class="remove-current-check">
+            {{ profile_form.remove_avatar }}
+            <label for="{{ profile_form.remove_avatar.id_for_label }}" class="accounts-edit-profile-inline-1">Supprimer la photo actuelle</label>
+        </div>
+    {% endif %}
+</div>
+
+            <p class="file-info-note">
+              Accepted: JPG, PNG, WebP<br>
+              Max size: 2MB
+            </p>
+          </div>
+
+          <!-- Right: Form Fields -->
+          <div class="form-fields-column">
+            
+            {% if user_form.non_field_errors or profile_form.non_field_errors %}
+              <div class="accounts-edit-profile-inline-2">
+                {{ user_form.non_field_errors }}
+                {{ profile_form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <div class="accounts-edit-profile-inline-3">
+              <div class="field-group">
+                <label for="{{ user_form.first_name.id_for_label }}">First Name</label>
+                {{ user_form.first_name }}
+                {% if user_form.first_name.errors %}<span class="error-text">{{ user_form.first_name.errors|striptags }}</span>{% endif %}
+              </div>
+              <div class="field-group">
+                <label for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+                {{ user_form.last_name }}
+                {% if user_form.last_name.errors %}<span class="error-text">{{ user_form.last_name.errors|striptags }}</span>{% endif %}
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="{{ user_form.username.id_for_label }}">Username</label>
+              {{ user_form.username }}
+              {% if user_form.username.errors %}<span class="error-text">{{ user_form.username.errors|striptags }}</span>{% endif %}
+            </div>
+
+            <div class="field-group">
+              <label for="{{ user_form.email.id_for_label }}">Email Address</label>
+              {{ user_form.email }}
+              {% if user_form.email.errors %}<span class="error-text">{{ user_form.email.errors|striptags }}</span>{% endif %}
+            </div>
+
+            <div class="field-group">
+              <label for="{{ profile_form.phone.id_for_label }}">Phone Number</label>
+              {{ profile_form.phone }}
+              {% if profile_form.phone.errors %}<span class="error-text">{{ profile_form.phone.errors|striptags }}</span>{% endif %}
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section Footer -->
+        <div class="form-footer">
+          <a href="{% url 'profile' %}" class="btn-fiy btn-ghost">Cancel</a>
+          <button type="submit" class="btn-fiy btn-gold">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/accounts/edit-profile.js' %}"></script>
+{% endblock %}

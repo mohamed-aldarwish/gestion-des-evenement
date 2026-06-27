@@ -1,0 +1,102 @@
+{% extends "dashboard/admin_base.html" %}
+{% load static %}
+
+{% block title %}Admin Settings{% endblock %}
+{% block page_title %}System Settings{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/admin-settings.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="settings-grid">
+
+    <div class="settings-card">
+        <h3>General Configuration</h3>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>Application Name</strong>
+                <span>Displayed across the platform interface.</span>
+            </div>
+            <span class="badge badge-success">EventFiY</span>
+        </div>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>Environment</strong>
+                <span>Current project execution mode.</span>
+            </div>
+            <span class="badge badge-warning">Development</span>
+        </div>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>Email Provider</strong>
+                <span>Used for reservation and waitlist notifications.</span>
+            </div>
+            <span class="badge badge-success">SendGrid Active</span>
+        </div>
+    </div>
+
+    <div class="settings-card">
+        <h3>Administrator Profile</h3>
+
+        <label>Username</label>
+        <input class="setting-input" value="{{ request.user.username }}" readonly>
+
+        <label class="dashboard-admin-settings-inline-1">Email</label>
+        <input class="setting-input" value="{{ request.user.email|default:'No email configured' }}" readonly>
+
+        <button class="btn-save" type="button">
+            Profile Locked
+        </button>
+    </div>
+
+    <div class="settings-card">
+        <h3>Notification Settings</h3>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>Reservation Confirmation</strong>
+                <span>Email sent after successful ticket reservation.</span>
+            </div>
+            <span class="badge badge-success">Enabled</span>
+        </div>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>Waitlist Promotion</strong>
+                <span>Email sent when a user is promoted from waitlist.</span>
+            </div>
+            <span class="badge badge-success">Enabled</span>
+        </div>
+    </div>
+
+    <div class="settings-card">
+        <h3>Deployment Checklist</h3>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>DEBUG Mode</strong>
+                <span>Disable before production deployment.</span>
+            </div>
+            <span class="badge badge-warning">Review</span>
+        </div>
+
+        <div class="setting-row">
+            <div class="setting-label">
+                <strong>API Keys</strong>
+                <span>Move SendGrid key to environment variables.</span>
+            </div>
+            <span class="badge badge-warning">Important</span>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

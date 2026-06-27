@@ -1,0 +1,178 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ event.title }} | Grand Luxe Events</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/events/event-detail.css' %}">
+  </head>
+  <body>
+    <div class="details-container">
+      <div
+        class="event-hero"
+        {% if event.image and event.image.name %}
+        data-hero-image="{{ event.image.url }}"
+{% endif %}
+      >
+        <span class="event-category"
+          >{{ event.category|default:"Premium Event" }}</span
+        >
+        <h1>{{ event.title }}</h1>
+
+        <div class="capacity-tracker">
+          <div class="events-event-detail-inline-1">
+          <span>Availability</span>
+<span id="seats-percent">0% Full</span>
+</div>
+<div class="progress-bg">
+    <div
+      class="progress-fill"
+      id="progress-bar"
+      data-capacity="{{ event.capacity }}"
+      data-remaining="{{ event.remaining_seats }}"
+    ></div>
+</div>
+</div>
+</div>
+
+<div class="event-content">
+    <div class="info-grid">
+        <div class="info-card">
+            <i class="fas fa-calendar-day"></i>
+            <label>Date</label>
+            <span>{{ event.event_date|date:"d M Y" }}</span>
+        </div>
+
+        <div class="info-card">
+            <i class="fas fa-clock"></i>
+            <label>Time</label>
+            <span>{{ event.event_time }}</span>
+        </div>
+
+        <div class="info-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <label>Location</label>
+            <span>{{ event.location }}</span>
+        </div>
+    </div>
+
+    <div class="description-text">
+        {{ event.description|default:"Discover a unique experience designed by the best organizers."|linebreaks }}
+    </div>
+
+    <div class="bottom-actions">
+        <div class="main-cta">
+
+            <div class="seat-status">
+                {{ event.remaining_seats }} seats remaining / {{ event.capacity }}
+
+                {% if event.remaining_seats <= 0 %}
+                    <span class="events-event-detail-inline-2">
+                        Sold Out
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if user.is_authenticated %}
+
+                {% if user.profile.role == 'organizer' or user.is_superuser %}
+
+                    <span class="events-event-detail-inline-3">
+                        Organizer View
+                    </span>
+
+                {% elif user_ticket %}
+
+                    <form method="post" action="{% url 'cancel_ticket' user_ticket.id %}">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-cancel-ticket">
+                            <i class="fas fa-ban"></i>
+                            Cancel Ticket
+                        </button>
+                    </form>
+
+                {% elif event.remaining_seats > 0 and event.status == 'published' %}
+
+                    <a href="{% url 'tickets:payment_page' event.id %}" class="btn btn-book">
+                        <i class="fas fa-credit-card"></i>
+                        Book Now
+                    </a>
+
+                {% elif waitlist_entry %}
+
+                    <span class="events-event-detail-inline-4">
+                        Waitlist Status:
+                        {{ waitlist_entry.get_status_display }}
+                    </span>
+
+                {% elif event.status == 'published' %}
+
+                {% if user_in_waitlist %}
+    <button class="btn-disabled" disabled>
+        Déjà dans la liste d’attente
+    </button>
+{% else %}
+    <form method="post" action="{% url 'join_waitlist' event.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-reserve">
+            Rejoindre la liste d’attente
+        </button>
+    </form>
+{% endif %}
+
+                {% else %}
+
+                    <span class="events-event-detail-inline-5">
+                        Sold Out or Unavailable
+                    </span>
+
+                {% endif %}
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="btn btn-book">
+                    Login to Reserve
+                </a>
+
+            {% endif %}
+
+
+
+</div>
+            <a href="{% url 'event_list' %}" class="tool-link" title="Retour"
+              ><i class="fas fa-arrow-left"></i
+            ></a>
+            {% if event.organizer == user or user.is_superuser %}
+            <a
+              href="{% url 'event_update' event.id %}"
+              class="tool-link"
+              title="Modifier"
+              ><i class="fas fa-edit"></i
+            ></a>
+            <a
+              href="{% url 'event_delete' event.id %}"
+              class="tool-link events-event-detail-inline-6"
+              title="Supprimer"
+
+              ><i class="fas fa-trash"></i
+            ></a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/events/event-detail.js' %}"></script>
+  </body>
+</html>

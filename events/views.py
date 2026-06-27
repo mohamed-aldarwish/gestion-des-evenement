@@ -6,6 +6,7 @@ from django.http import Http404
 from django.views.decorators.http import require_POST
 from django.db.models import Q, Sum, Value
 from django.db.models.functions import Coalesce
+from urllib3 import request
 
 from accounts.permissions import can_manage_event, can_reserve_events, is_organizer
 from events.models import Event, Waitlist
@@ -42,6 +43,23 @@ def event_list(request):
     category = request.GET.get('category', '')
     status = request.GET.get('status', '')
 
+    user_ticket_event_ids = []
+
+    if request.user.is_authenticated:
+        user_ticket_event_ids = Ticket.objects.filter(
+            user=request.user,
+            status='active',
+            payment_status='paid'
+        ).values_list('event_id', flat=True)
+
+    waitlisted_event_ids = []
+
+    if request.user.is_authenticated:
+        waitlisted_event_ids = Waitlist.objects.filter(
+            user=request.user,
+            status__in=['waiting', 'notified']
+        ).values_list('event_id', flat=True)
+
     if is_organizer(request.user):
 
         events = event_queryset().filter(
@@ -74,6 +92,8 @@ def event_list(request):
         'search': search,
         'category': category,
         'status': status,
+        'waitlisted_event_ids': waitlisted_event_ids,
+        'user_ticket_event_ids': user_ticket_event_ids,
     })
 
 
@@ -89,25 +109,35 @@ def event_detail(request, id):
 
     user_ticket = None
     waitlist_entry = None
+    user_in_waitlist = False
 
     if can_reserve_events(request.user):
+
         user_ticket = Ticket.objects.filter(
             user=request.user,
             event=event,
             status='active',
             payment_status='paid'
         ).first()
+
         waitlist_entry = Waitlist.objects.filter(
             user=request.user,
             event=event,
             status__in=['waiting', 'notified']
         ).first()
 
+        user_in_waitlist = Waitlist.objects.filter(
+            user=request.user,
+            event=event,
+            status__in=['waiting', 'notified']
+        ).exists()
+
     return render(request, 'events/event_detail.html', {
         'event': event,
         'user_ticket': user_ticket,
         'waitlist_entry': waitlist_entry,
         'can_reserve': can_reserve_events(request.user),
+        'user_in_waitlist': user_in_waitlist,
     })
 
 

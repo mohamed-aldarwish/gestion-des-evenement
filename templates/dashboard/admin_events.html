@@ -1,0 +1,198 @@
+{% extends "dashboard/admin_base.html" %}
+{% load static %}
+
+{% block title %}
+Manage Events
+{% endblock %}
+
+{% block page_title %}
+Manage Events
+{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/admin-events.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="top-bar">
+
+    <form method="GET" class="search-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search event..."
+            class="search-input"
+        >
+
+        <select name="status" class="filter-select">
+
+            <option value="">
+                All Status
+            </option>
+
+            <option value="published"
+                {% if status == 'published' %}selected{% endif %}>
+                Published
+            </option>
+
+            <option value="draft"
+                {% if status == 'draft' %}selected{% endif %}>
+                Draft
+            </option>
+
+        </select>
+
+        <button type="submit" class="search-btn">
+            Search
+        </button>
+
+    </form>
+
+    <a href="{% url 'event_create' %}" class="create-btn">
+        + Create Event
+    </a>
+
+</div>
+
+<div class="results-text">
+    Total Events:
+    <strong>{{ events.count }}</strong>
+</div>
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Image</th>
+            <th>Event</th>
+            <th>Organizer</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for event in events %}
+
+        <tr>
+
+            <td>
+
+                {% if event.image %}
+
+                    <img
+                        src="{{ event.image.url }}"
+                        class="event-thumb"
+                    >
+
+                {% else %}
+
+                    <span class="no-image">
+                        No image
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <strong>
+                    {{ event.title }}
+                </strong>
+
+            </td>
+
+            <td>
+
+                {{ event.organizer.username }}
+
+            </td>
+
+            <td>
+
+                {% if event.status == 'published' %}
+
+                    <span class="status published">
+                        Published
+                    </span>
+
+                {% else %}
+
+                    <span class="status draft">
+                        Draft
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                {{ event.event_date }}
+
+            </td>
+
+            <td>
+
+                {{ event.capacity }}
+
+            </td>
+
+            <td class="dashboard-admin-events-inline-1">
+
+                <a
+                    href="{% url 'event_detail' event.id %}"
+                    class="action-btn view-btn"
+                >
+                    View
+                </a>
+
+                <a
+                    href="{% url 'event_update' event.id %}"
+                    class="action-btn edit-btn"
+                >
+                    Edit
+                </a>
+
+                <a
+                    href="{% url 'event_delete' event.id %}"
+                    class="action-btn delete-btn"
+                >
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7">
+                No events found.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

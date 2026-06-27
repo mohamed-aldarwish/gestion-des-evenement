@@ -1,0 +1,84 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Ticket | {{ event.title }}</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/events/book-ticket.css' %}">
+  </head>
+
+  <body>
+    <div class="booking-card">
+      <div class="header-section">
+        <span class="event-badge">
+          <i class="fas fa-shield-alt"></i> Official Booking
+        </span>
+
+        <h1>{{ event.title }}</h1>
+        <p>{{ event.location }}</p>
+      </div>
+
+      <div class="booking-body">
+        <div class="availability-box">
+          <span>Remaining Capacity</span>
+          <span class="seats-tag">{{ remaining_seats }} Seats</span>
+        </div>
+
+        {% if remaining_seats <= 0 %}
+        <form method="POST" action="" id="bookingForm">
+          {% csrf_token %}
+
+          <div class="content-box">
+            <i class="fas fa-clock"></i>
+
+            <h2>Event Full</h2>
+
+            <p>
+              This event is currently full. Join the waiting list and we will
+              notify you when a seat becomes available.
+            </p>
+          </div>
+
+          <button type="submit" class="btn-main" id="confirmBtn">
+            <span>Join Waiting List</span>
+            <i class="fas fa-clock"></i>
+          </button>
+        </form>
+        {% else %}
+        <div class="content-box">
+          <i class="fas fa-credit-card"></i>
+
+          <h2>Seats Available</h2>
+
+          <p>Continue to secure payment to confirm your reservation.</p>
+        </div>
+
+        <a
+          href="{% url 'tickets:payment_page' event.id %}"
+          class="payment-link"
+        >
+          <span>Book Now</span>
+          <i class="fas fa-credit-card"></i>
+        </a>
+        {% endif %}
+
+        <a href="{% url 'event_detail' event.id %}" class="back-link">
+          Cancel and return to event
+        </a>
+      </div>
+    </div>
+
+    <script src="{% static 'js/events/book-ticket.js' %}"></script>
+  </body>
+</html>

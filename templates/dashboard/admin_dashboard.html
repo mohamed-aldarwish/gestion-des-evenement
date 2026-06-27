@@ -1,0 +1,117 @@
+{% extends "dashboard/admin_base.html" %}
+{% load static %}
+
+{% block title %}Admin Overview{% endblock %}
+
+{% block page_title %}Admin Overview{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/admin-dashboard.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="quick-actions">
+    <a href="{% url 'event_create' %}" class="quick-btn">
+        <i class="fas fa-plus"></i> Create Event
+    </a>
+
+
+</div>
+
+<div class="overview-grid">
+
+    <div class="overview-card">
+        <i class="fas fa-users"></i>
+        <h3>Total Users</h3>
+        <h1>{{ total_users|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Total Events</h3>
+        <h1>{{ total_events|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-check-circle"></i>
+        <h3>Published Events</h3>
+        <h1>{{ published_events|default:"0" }}</h1>
+    </div>
+
+    <div class="overview-card">
+        <i class="fas fa-ticket-alt"></i>
+        <h3>Total Tickets</h3>
+        <h1>{{ total_tickets|default:"0" }}</h1>
+    </div>
+
+</div>
+
+<h2 class="section-title">Recent Events</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for event in recent_events %}
+        <tr>
+            <td><strong>{{ event.title }}</strong></td>
+
+            <td>
+                {% if event.status == 'published' %}
+                    <span class="status published">Published</span>
+                {% else %}
+                    <span class="status draft">Draft</span>
+                {% endif %}
+            </td>
+
+            <td>{{ event.event_date|date:"M d, Y" }}</td>
+            <td>{{ event.location|default:"TBA" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No recent events.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2 class="section-title">Recent Tickets</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Event</th>
+            <th>Quantity</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for ticket in recent_tickets %}
+        <tr>
+            <td><strong>{{ ticket.user.username }}</strong></td>
+            <td>{{ ticket.event.title }}</td>
+            <td>{{ ticket.quantity }}</td>
+            <td>{{ ticket.booked_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No recent tickets.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/dashboard/admin-base.css' %}">
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body>
+    <aside class="sidebar">
+      <div class="logo">
+        <i class="fas fa-microchip"></i>
+        EventFiY
+      </div>
+
+      <nav class="nav-links">
+<a href="{% url 'admin_dashboard' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">          <i class="fas fa-chart-pie"></i>
+          Overview
+        </a>
+
+<a href="{% url 'admin_events' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_events' %}active{% endif %}">          <i class="fas fa-calendar-alt"></i>
+          Events
+        </a>
+
+<a href="{% url 'admin_tickets' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_tickets' %}active{% endif %}">          <i class="fas fa-ticket-alt"></i>
+          Tickets
+        </a>
+
+<a href="{% url 'admin_users' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">          <i class="fas fa-users"></i>
+          Users
+        </a>
+
+<a href="{% url 'admin_analytics' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_analytics' %}active{% endif %}">          <i class="fas fa-chart-line"></i>
+          Analytics
+        </a>
+
+<a href="{% url 'admin_settings' %}"
+   class="nav-item {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %}">          <i class="fas fa-cog"></i>
+          Settings
+        </a>
+
+        <a href="{% url 'logout' %}" class="nav-item logout">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="page-title">
+        <h1>{% block page_title %} Dashboard {% endblock %}</h1>
+      </div>
+
+      <div class="content-card">{% block content %} {% endblock %}</div>
+    </main>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

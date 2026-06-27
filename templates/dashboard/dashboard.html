@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Experience | Grand Luxe Dashboard{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/dashboard.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+    <header class="hero-luxury">
+        <div class="dashboard-dashboard-inline-1">
+            <div>
+                <h1>Marhaba, {{ user.first_name|default:user.username }}!</h1>
+                <p>Manage your reservations and explore upcoming luxury events at Grand Luxe.</p>
+            </div>
+            <i class="fas fa-crown dashboard-dashboard-inline-2"></i>
+        </div>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon-box"><i class="fas fa-calendar-alt"></i></div>
+            <div class="stat-info">
+                <h3>My Events</h3>
+                <div class="value">{{ total_events|default:"0" }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon-box"><i class="fas fa-ticket-alt"></i></div>
+            <div class="stat-info">
+                <h3>Active Tickets</h3>
+                <div class="value">{{ total_tickets|default:"0" }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon-box"><i class="fas fa-star"></i></div>
+            <div class="stat-info">
+                <h3>Loyalty Points</h3>
+                <div class="value">450</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <section>
+            <h2>Upcoming Reservations <i class="fas fa-chevron-right dashboard-dashboard-inline-3"></i></h2>
+
+            {% for event in recent_events %}
+            <div class="custom-card">
+                <div class="card-header">
+                    <h3>{{ event.title }}</h3>
+                    <span class="status-badge">Confirmed</span>
+                </div>
+                <div class="card-body">
+                    <p><i class="far fa-calendar"></i> {{ event.event_date|date:"M d, Y" }}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-plus dashboard-dashboard-inline-4"></i>
+                <p>No active reservations. Ready for a new experience?</p>
+            </div>
+            {% endfor %}
+        </section>
+
+        <section>
+            <h2>Recent Tickets</h2>
+            {% for ticket in recent_tickets %}
+            <div class="custom-card ticket-item">
+                <div class="card-header">
+                    <strong class="dashboard-dashboard-inline-5">{{ ticket.event.title }}</strong>
+                    <span class="quantity-tag">x{{ ticket.quantity }}</span>
+                </div>
+                <div class="card-body">
+                    <p class="dashboard-dashboard-inline-6"><i class="far fa-clock"></i> Booked: {{ ticket.booked_at|date:"M d, Y" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="dashboard-dashboard-inline-7">No tickets issued yet.</p>
+            {% endfor %}
+        </section>
+    </div>
+
+    <a href="{% url 'event_list' %}" class="btn-action">
+        <span>Explore All Events</span>
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+
+
+</body>
+</html>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/dashboard/dashboard.js' %}"></script>
+{% endblock %}

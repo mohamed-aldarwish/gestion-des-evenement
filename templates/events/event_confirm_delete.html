@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supprimer | {{ event.title }}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/events/event-confirm-delete.css' %}">
+  </head>
+  <body>
+    <div class="delete-container">
+      <div class="warning-icon-animate">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+
+      <h1>Attention !</h1>
+
+      <div class="alert-box">
+        <p>
+          You are about to delete the event
+          <span class="event-title-display">"{{ event.title }}"</span>. All
+          associated data will be lost.
+        </p>
+      </div>
+
+      <div class="actions">
+        <form method="POST" action="" id="deleteForm">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="btn btn-danger events-event-confirm-delete-inline-1"
+            id="confirmDeleteBtn"
+
+          >
+            <i class="fas fa-trash-alt"></i> Confirm Deletion
+          </button>
+        </form>
+
+        <a href="{% url 'event_detail' event.id %}" class="btn btn-cancel">
+          <i class="fas fa-times"></i> Cancel
+        </a>
+      </div>
+
+      <span class="irreversible-tag">Action irreversible</span>
+    </div>
+
+    <script src="{% static 'js/events/event-confirm-delete.js' %}"></script>
+  </body>
+</html>

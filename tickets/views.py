@@ -18,7 +18,6 @@ from .services import (
     PaymentConfirmationError,
     PaymentMetadataError,
     PaymentNotSucceeded,
-    WaitlistPriorityError,
     confirm_paid_ticket,
     user_can_start_payment,
 )
@@ -151,7 +150,7 @@ def payment_success(request, event_id):
         messages.error(request, "Payment was not completed.")
         return redirect('tickets:payment_cancel')
 
-    except (PaymentMetadataError, WaitlistPriorityError, NoSeatsAvailableError) as exc:
+    except (PaymentMetadataError, NoSeatsAvailableError) as exc:
         messages.error(request, str(exc))
         return redirect('event_detail', id=event.id)
 

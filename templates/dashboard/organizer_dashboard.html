@@ -1,0 +1,333 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Organizer Hub | EventFiY Events</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+        <link rel="stylesheet" href="{% static 'css/dashboard/organizer-dashboard.css' %}">
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="container">
+        <div class="header-content">
+          <div>
+            <h1>Organizer Hub</h1>
+            <p>Welcome back, monitoring your events performance.</p>
+          </div>
+          <a href="{% url 'event_create' %}" class="btn-create-main">
+            <i class="fas fa-plus"></i> New Event
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-icon dashboard-organizer-dashboard-inline-1">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div>
+            <small class="dashboard-organizer-dashboard-inline-2">Active Events</small
+            >
+            <div class="dashboard-organizer-dashboard-inline-3">
+              {{ my_events.count|default:"1" }}
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-icon dashboard-organizer-dashboard-inline-4">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+          <div>
+            <small class="dashboard-organizer-dashboard-inline-5">Total Tickets</small
+            >
+            <div class="dashboard-organizer-dashboard-inline-6">
+              {{ total_tickets|default:"0" }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-icon dashboard-organizer-dashboard-inline-7">
+          <i class="fas fa-clock"></i>
+        </div>
+
+        <div>
+          <small class="dashboard-organizer-dashboard-inline-8"> Waitlist </small>
+
+          <div class="dashboard-organizer-dashboard-inline-9">
+            {{ total_waitlist|default:"0" }}
+          </div>
+        </div>
+      </div>
+
+      <section class="content-section">
+
+    <div class="section-header">
+        <h2>
+            <i class="fas fa-chart-line"></i>
+            Revenue Analytics
+        </h2>
+    </div>
+
+    <div class="sales-card dashboard-organizer-dashboard-inline-10">
+
+        <div class="dashboard-organizer-dashboard-inline-11">
+
+            <div class="stat-box">
+                <div class="stat-icon dashboard-organizer-dashboard-inline-12"
+                    >
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+
+                <div>
+                    <small class="dashboard-organizer-dashboard-inline-13">
+                        Total Revenue
+                    </small>
+
+                    <div class="dashboard-organizer-dashboard-inline-14">
+                        ${{ total_revenue }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon dashboard-organizer-dashboard-inline-15"
+                    >
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+
+                <div>
+                    <small class="dashboard-organizer-dashboard-inline-16">
+                        Paid Tickets
+                    </small>
+
+                    <div class="dashboard-organizer-dashboard-inline-17">
+                        {{ total_tickets }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <canvas id="revenueChart" data-chart-data="{{ revenue_chart_data|escape }}"></canvas>
+
+    </div>
+
+</section>
+      <section class="content-section">
+  <div class="section-header">
+    <h2><i class="fas fa-layer-group"></i> My Active Events</h2>
+  </div>
+
+  <div class="events-grid">
+    {% for event in my_events %}
+    <div class="event-card">
+      {% if event.image %}
+      <img src="{{ event.image.url }}" class="event-image">
+      {% endif %}
+
+      <div class="dashboard-organizer-dashboard-inline-18">
+        <h3 class="dashboard-organizer-dashboard-inline-19">
+          {{ event.title|default:"Event Title" }}
+        </h3>
+        <span class="status-badge badge-active">Live</span>
+      </div>
+
+      <div class="card-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ event.event_date|date:"M d, Y" }}</span>
+        <span><i class="fas fa-map-marker-alt"></i> {{ event.location|default:"Casablanca" }}</span>
+      </div>
+
+      <div class="dashboard-organizer-dashboard-inline-20">
+        <div class="dashboard-organizer-dashboard-inline-21">
+          <div class="organizer-progress-fill" data-progress="{% widthratio event.booked_seats event.capacity 100 %}"></div>
+        </div>
+        <small class="dashboard-organizer-dashboard-inline-22">
+          {{ event.booked_seats }} / {{ event.capacity }} seats booked
+        </small>
+      </div>
+
+      <div class="card-actions">
+        <a href="{% url 'event_update' event.id %}" class="btn-icon btn-edit" title="Edit">
+          <i class="fas fa-pen"></i>
+        </a>
+        <a href="{% url 'event_delete' event.id %}" class="btn-icon btn-delete" title="Delete">
+          <i class="fas fa-trash"></i>
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div class="dashboard-organizer-dashboard-inline-23">
+      <p class="dashboard-organizer-dashboard-inline-24">You haven't created any active events yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="section-header">
+    <h2><i class="fas fa-file-alt"></i> Draft Events</h2>
+  </div>
+
+  <div class="events-grid">
+    {% for event in draft_events_list %}
+    <div class="event-card">
+      {% if event.image %}
+      <img src="{{ event.image.url }}" class="event-image">
+      {% endif %}
+
+      <div class="dashboard-organizer-dashboard-inline-25">
+        <h3 class="dashboard-organizer-dashboard-inline-26">
+          {{ event.title }}
+        </h3>
+        <span class="status-badge dashboard-organizer-dashboard-inline-27">
+          Draft
+        </span>
+      </div>
+
+      <div class="card-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ event.event_date|date:"M d, Y" }}</span>
+        <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+      </div>
+
+      <div class="card-actions">
+        <a href="{% url 'event_update' event.id %}" class="btn-icon btn-edit" title="Edit">
+          <i class="fas fa-pen"></i>
+        </a>
+        <a href="{% url 'event_delete' event.id %}" class="btn-icon btn-delete" title="Delete">
+          <i class="fas fa-trash"></i>
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div class="dashboard-organizer-dashboard-inline-28">
+      <p class="dashboard-organizer-dashboard-inline-29">No drafts available.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2><i class="fas fa-shopping-cart"></i> Recent Sales Activity</h2>
+        </div>
+
+        <div class="sales-card">
+          {% for ticket in my_tickets %}
+          <div class="sale-item">
+            <div class="user-info">
+              <div class="user-avatar">
+                {{ ticket.user.username|first|upper }}
+              </div>
+              <div>
+                <div class="dashboard-organizer-dashboard-inline-30">
+                  {{ ticket.user.username }}
+                </div>
+                <div class="dashboard-organizer-dashboard-inline-31">
+                  Purchased for: {{ ticket.event.title }}
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-organizer-dashboard-inline-32">
+              <div class="dashboard-organizer-dashboard-inline-33">
+                + {{ ticket.quantity }} Ticket(s)
+              </div>
+              <div class="dashboard-organizer-dashboard-inline-34">
+                {{ ticket.booked_at|timesince }} ago
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="dashboard-organizer-dashboard-inline-35">
+            <i
+              class="fas fa-inbox dashboard-organizer-dashboard-inline-36"
+
+            ></i>
+            <p>No sales activity recorded yet.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="content-section">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-hourglass-half"></i>
+            Waitlist Activity
+          </h2>
+        </div>
+
+        <div class="sales-card">
+          {% for entry in waitlist_entries %}
+
+          <div class="sale-item">
+            <div class="user-info">
+              <div class="user-avatar">
+                {{ entry.user.username|first|upper }}
+              </div>
+
+              <div>
+                <div class="dashboard-organizer-dashboard-inline-37">
+                  {{ entry.user.username }}
+                </div>
+
+                <div class="dashboard-organizer-dashboard-inline-38">
+                  Waiting for: {{ entry.event.title }}
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-organizer-dashboard-inline-39">
+              <div class="dashboard-organizer-dashboard-inline-40">
+                {{ entry.get_status_display }}
+              </div>
+
+              <div class="dashboard-organizer-dashboard-inline-41">
+                {{ entry.created_at|timesince }} ago
+              </div>
+            </div>
+          </div>
+
+          {% empty %}
+
+          <div class="dashboard-organizer-dashboard-inline-42">
+            <i
+              class="fas fa-check-circle dashboard-organizer-dashboard-inline-43"
+
+            ></i>
+
+            <p>No users in waitlist.</p>
+          </div>
+
+          {% endfor %}
+        </div>
+      </section>
+
+      <div class="dashboard-organizer-dashboard-inline-44">
+        <a
+          href="{% url 'event_list' %}" class="dashboard-organizer-dashboard-inline-45">
+          <i class="fas fa-arrow-left dashboard-organizer-dashboard-inline-46"></i> Back to
+          Main Website
+        </a>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{% static 'js/dashboard/organizer-dashboard.js' %}"></script>
+</html>

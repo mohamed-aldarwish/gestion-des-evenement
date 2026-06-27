@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment</title>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="{% static 'css/tickets/payment-page.css' %}">
+</head>
+<body>
+
+<div class="payment-card">
+
+    <div class="top">
+        <h1>Secure Payment</h1>
+        <p>Complete your reservation securely.</p>
+    </div>
+
+    <div class="event-box">
+        <h3>{{ event.title }}</h3>
+
+        <p>
+            {{ event.event_date }}
+            •
+            {{ event.location }}
+        </p>
+
+        <div class="price">
+            ${{ event.price }}
+        </div>
+    </div>
+
+    <form
+        id="payment-form"
+        data-stripe-public-key="{{ stripe_public_key }}"
+        data-create-intent-url="{% url 'tickets:create_payment_intent' event.id %}"
+        data-csrf-token="{{ csrf_token }}"
+        data-success-url="{% url 'tickets:payment_success' event.id %}"
+        data-cancel-url="{% url 'tickets:payment_cancel' %}"
+    >
+
+        <div id="card-element"></div>
+
+        <button id="submit" class="pay-btn">
+            Pay Now
+        </button>
+
+        <div id="payment-message"></div>
+
+    </form>
+
+</div>
+
+<script src="{% static 'js/tickets/payment-page.js' %}"></script>
+
+</body>
+</html>

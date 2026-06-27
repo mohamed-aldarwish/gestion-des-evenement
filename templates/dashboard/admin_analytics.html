@@ -1,0 +1,58 @@
+{% extends "dashboard/admin_base.html" %}
+{% load static %}
+
+{% block title %}Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard/admin-analytics.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="analytics-grid">
+    <div class="analytics-card">
+        <h3>Total Users</h3>
+        <h1>{{ total_users }}</h1>
+    </div>
+
+    <div class="analytics-card">
+        <h3>Total Events</h3>
+        <h1>{{ total_events }}</h1>
+    </div>
+
+    <div class="analytics-card">
+        <h3>Published Events</h3>
+        <h1>{{ published_events }}</h1>
+    </div>
+
+    <div class="analytics-card">
+        <h3>Total Tickets</h3>
+        <h1>{{ total_tickets }}</h1>
+    </div>
+</div>
+
+<div class="charts-grid">
+    <div class="chart-box">
+        <h3>Tickets Per Month</h3>
+        <canvas id="ticketsChart" data-chart-data="{{ ticket_chart_data|escape }}"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Events Status</h3>
+        <canvas id="statusChart" data-chart-data="{{ event_status_data|escape }}"></canvas>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard/admin-analytics.js' %}"></script>
+{% endblock %}

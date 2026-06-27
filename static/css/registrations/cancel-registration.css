@@ -1,0 +1,131 @@
+:root {
+        --danger: #ef4444;
+        --danger-soft: #fee2e2;
+        --primary: #1e293b;
+        --bg: #f8fafc;
+        --white: #ffffff;
+        --text-muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .cancel-card {
+        background: var(--white);
+        max-width: 450px;
+        width: 100%;
+        padding: 40px;
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 0.4s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .icon-container {
+        width: 80px;
+        height: 80px;
+        background: var(--danger-soft);
+        color: var(--danger);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        margin: 0 auto 25px;
+      }
+
+      h2 {
+        color: var(--primary);
+        margin: 0 0 10px 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .warning-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+        line-height: 1.5;
+      }
+
+      .event-details {
+        background: #f1f5f9;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border: 1px dashed #cbd5e1;
+      }
+
+      .event-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .event-title {
+        display: block;
+        font-weight: 600;
+        color: var(--primary);
+        margin-top: 5px;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      button[type="submit"] {
+        background: var(--danger);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      button[type="submit"]:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(239, 68, 68, 0.2);
+      }
+
+      .btn-back {
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 10px;
+        transition: 0.3s;
+      }
+
+      .btn-back:hover {
+        color: var(--primary);
+      }
